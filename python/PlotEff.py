@@ -33,7 +33,7 @@ def DrawOneFile(mFileName):
     '''Function to draw eff plots in one mass point,
     give one file name.'''
     mFile = rt.TFile.Open(mFileName)
-    c1 = rt.TCanvas(800, 600)
+    c1 = rt.TCanvas('c1', '', 800, 600)
 
     # read all histograms
     h_4j3b = mFile.Get('h_4j3bRawEvents')
