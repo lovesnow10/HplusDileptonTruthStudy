@@ -100,7 +100,7 @@ def DrawOneFile(mFileName):
     pave3.Draw()
 
     masspoint = GetMassPoint(mFileName)
-    c1.SavePrint('Eff_' + masspoint + '.png')
+    c1.Print('Eff_' + masspoint + '.png')
 
 
 def DrawAllFile(mFileTxt):
