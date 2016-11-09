@@ -10,7 +10,7 @@ def GetMassPoint(mFileName):
     ms = ''
     for s in ss:
         if s.find('hplus') or s.find('Hplus'):
-            ms = s
+            ms = s[:-5]
     if ms == '':
         print 'Cannot find mass point name'
     return ms
