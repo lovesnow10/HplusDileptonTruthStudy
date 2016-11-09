@@ -107,3 +107,13 @@ def DrawAllFile(mFileTxt):
     '''Function to draw compare eff plots between different mass points,
     give a txt file which contains all the files.'''
     pass
+
+
+def main(argv):
+    if argv[1] == '-f':
+        DrawOneFile(argv[2])
+    elif argv[1] == '-c':
+        DrawAllFile(argv[2])
+
+if __name__ == '__main__':
+    main(sys.argv)
