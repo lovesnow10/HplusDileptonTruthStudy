@@ -94,7 +94,7 @@ def DrawOneFile(mFileName):
     pave2.Draw()
 
     pave3 = rt.TPaveText(3.7, 1.1, 5.1, 1.6)
-    pave3.AddText('Yields for 4j4bInc:')
+    pave3.AddText('Yields for 4j3bInc:')
     pave3.AddText('Total: %d' % (yields_4j3binc))
     pave3.AddText('Available: %d' % (avail_4j3binc))
     pave3.Draw()
