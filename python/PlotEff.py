@@ -55,7 +55,7 @@ def DrawOneFile(mFileName):
     h_4j3binc.SetMarkerSize(1.2)
 
     # Draw plots
-    h_4j3b.SetStat(0)
+    h_4j3b.SetStats(0)
     h_4j3b.SetTitle('')
     h_4j3b.SetMinimum(0.0)
     h_4j3b.SetMaximum(1.7)
