@@ -20,7 +20,7 @@ def OpenAllFiles(mDirTxt):
     mFilesDict = {}
     mFile = open(mDirTxt)
     Lines = mFile.readlines()
-    For line in Lines:
+    for line in Lines:
         tmpRFile = rt.TFile.Open(line)
         if not tmpRFile.isZombie():
             mFilesDict[line] = tmpRFile
