@@ -68,7 +68,7 @@ def DrawOneFile(mFileName):
     masspoint = GetMassPoint(mFileName)
     # Draw legend
     legend = rt.TLegend(0.80, 0.80, 0.95, 0.95)
-    legend.AddEntry(None, masspoint)
+    legend.AddEntry(None, masspoint, '')
     legend.AddEntry('h_4j3bRawEvents', '4j3b', 'p')
     legend.AddEntry('h_4j4bRawEvents', '4j4b', 'p')
     legend.AddEntry('h_4j3bIncRawEvents', '4j3bInc', 'p')
