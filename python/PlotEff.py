@@ -30,7 +30,7 @@ def OpenAllFiles(mDirTxt):
     Lines = mFile.readlines()
     for line in Lines:
         tmpRFile = rt.TFile.Open(line.strip())
-        if not tmpRFile.isZombie():
+        if not tmpRFile.IsZombie():
             masspoint = GetMassPoint(line)
             mFilesDict[masspoint] = tmpRFile
         else:
