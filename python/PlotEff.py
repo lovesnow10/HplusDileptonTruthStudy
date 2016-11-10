@@ -15,6 +15,14 @@ def GetMassPoint(mFileName):
         print 'Cannot find mass point name'
     return ms
 
+def GetAllHists(mFilesDict, mHistName):
+    mHistDict = {}
+    for _name, _file in mFilesDict.items():
+        mHist = _file.Get(mHistName)
+        mName = mHist.GetName()
+        mHistDict[_name] = mHist.Clone(mName+'_'+_name)
+    return mHistDict
+
 
 def OpenAllFiles(mDirTxt):
     mFilesDict = {}
@@ -23,11 +31,41 @@ def OpenAllFiles(mDirTxt):
     for line in Lines:
         tmpRFile = rt.TFile.Open(line)
         if not tmpRFile.isZombie():
-            mFilesDict[line] = tmpRFile
+            masspoint = GetMassPoint(line)
+            mFilesDict[masspoint] = tmpRFile
         else:
             print 'Cannot open file %s' % (line)
     return mFilesDict
 
+def DrawDictPlot(Canvas, mHistDict, outName):
+    Canvas.Clear()
+    mHistNameList = mHistDict.keys()
+    #Setup a ghost hist for style
+    GhostHist = mHistDict[mHistNameList[0]].Clone("Ghost")
+    for nBin in xrange(1, GhostHist.GetNbinsX()+1):
+        GhostHist.SetBinContent(nBin, 0.0)
+    GhostHist.SetStats(0)
+    GhostHist.SetTitle('')
+    GhostHist.SetMinimum(0)
+    GhostHist.SetMaximum(1.5)
+
+    #Draw hists
+    Canvas.GetPad(0).SetGridy()
+    GhostHist.Draw()
+
+    #Setup real hists style and Draw
+    legend = rt.TLegend(0.75, 0.75, 0.95, 0.95)
+    for i, hname in enumerate(mHistNameList):
+        mHist = mHistDict[hname]
+        mName = mHist.GetName()
+        mHist.SetMarkerColor(i+1)
+        mHist.SetMarkerSize(1.1)
+        mHist.SetMarkerStyle(20)
+        mHist.Draw('same P0')
+        legend.AddEntry(mName, hname, 'p')
+
+    legend.Draw('same')
+    Canvas.Print(outName + '.png')
 
 def DrawOneFile(mFileName):
     '''Function to draw eff plots in one mass point,
@@ -107,10 +145,18 @@ def DrawOneFile(mFileName):
 def DrawAllFile(mFileTxt):
     '''Function to draw compare eff plots between different mass points,
     give a txt file which contains all the files.'''
-    pass
+    mFilesDict = OpenAllFiles(mFileTxt)
+    h_4j3b_Dict = GetAllHists(mFilesDict, 'h_4j3bRawEvents')
+    h_4j4b_Dict = GetAllHists(mFilesDict, 'h_4j4bRawEvents')
+    h_4j3binc_Dict = GetAllHists(mFilesDict, 'h_4j3bIncRawEvents')
+    c1 = rt.TCanvas('c1', '', 800, 600)
+    DrawDictPlot(c1, h_4j3b_Dict, 'Eff_4j3b_compare')
+    DrawDictPlot(c1, h_4j4b_Dict, 'Eff_4j4b_compare')
+    DrawDictPlot(c1, h_4j3binc_Dict, 'Eff_4j3bInc_compare')
 
 
 def main(argv):
+    rt.gROOT.SetBatch(True)
     if argv[1] == '-f':
         DrawOneFile(argv[2])
     elif argv[1] == '-c':
