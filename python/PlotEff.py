@@ -65,8 +65,10 @@ def DrawOneFile(mFileName):
     h_4j4b.Draw('same P0')
     h_4j3binc.Draw('same P0')
 
+    masspoint = GetMassPoint(mFileName)
     # Draw legend
     legend = rt.TLegend(0.80, 0.80, 0.95, 0.95)
+    legend.AddEntry(None, masspoint)
     legend.AddEntry('h_4j3bRawEvents', '4j3b', 'p')
     legend.AddEntry('h_4j4bRawEvents', '4j4b', 'p')
     legend.AddEntry('h_4j3bIncRawEvents', '4j3bInc', 'p')
@@ -99,7 +101,6 @@ def DrawOneFile(mFileName):
     pave3.AddText('Available: %d' % (avail_4j3binc))
     pave3.Draw()
 
-    masspoint = GetMassPoint(mFileName)
     c1.Print('Eff_' + masspoint + '.png')
 
 
