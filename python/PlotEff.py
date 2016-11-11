@@ -55,6 +55,7 @@ def DrawDictPlot(Canvas, mHistDict, outName):
 
     #Setup real hists style and Draw
     legend = rt.TLegend(0.75, 0.75, 0.95, 0.95)
+    legend.AddEntry(None, outName, '')
     for i, hname in enumerate(mHistNameList):
         mHist = mHistDict[hname]
         mName = mHist.GetName()
