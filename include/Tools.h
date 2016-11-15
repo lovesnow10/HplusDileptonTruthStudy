@@ -18,6 +18,10 @@
 #include <vector>
 #include <map>
 
+//fuctionalities
+std::map<std::string, bool> JetMatching(TTree *mEvent);
+
+//main functions
 int CheckJetsMatchingEff(TTree *fTree, const char* outName);
 
 #endif /* ifndef __TOOLS_H */

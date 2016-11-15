@@ -1,4 +1,4 @@
-GCC = g++
+GCC = clang++
 ROOTFLAGS := $(shell root-config --cflags)
 ROOTLIBS := $(shell root-config --libs)
 SRCDIR = src

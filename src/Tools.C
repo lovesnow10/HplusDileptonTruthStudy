@@ -1,26 +1,54 @@
 #include "Tools.h"
 #include <TMath.h>
 
-int CheckJetsMatchingEff(TTree* fTree, const char* outName)
+std::map<std::string, bool> JetMatching(TTree* mEvent)
+{
+  const int BIT_B0 = 10;
+  const int BIT_B1 = 12;
+  const int BIT_B2 = 11;
+  const int BIT_B3 = 13;
+
+  std::map<std::string, bool> results;
+  results.clear();
+
+  //read stuff from tree
+  std::vector<int> jet_truthmatch = GetTreeValue<std::vector<int>>(mEvent, "jet_truthmatch");
+  int nJets = GetTreeValue<int>(mEvent, "nJets");
+
+  results["B0"] = false;
+  results["B1"] = false;
+  results["B2"] = false;
+  results["B3"] = false;
+
+  for (size_t iJet = 0; iJet < nJets; iJet++) {
+    int bit = int(TMath::Log2(jet_truthmatch.at(iJet)));
+    switch (bit) {
+      case BIT_B0:
+        results["B0"] = true;
+        break;
+      case BIT_B1:
+        results["B1"] = true;
+        break;
+      case BIT_B2:
+        results["B2"] = true;
+        break;
+      case BIT_B3:
+        results["B3"] = true;
+        break;
+      default:
+        break;
+    }
+  }
+  return results;
+}
+
+int CheckJetsMatchingEff(TTree* mTree, const char* outName)
 {
     std::cout<<"Initialzing..."<<std::endl;
-     //Constants
-    const int BIT_B0 = 10;
-    const int BIT_B1 = 12;
-    const int BIT_B2 = 11;
-    const int BIT_B3 = 13;
 
     //Variable defination
-    std::vector<int> *jet_truthmatch = new std::vector<int>;
     int nJets, nBTags;
     int nElectrons, nMuons;
-
-    //Set branches
-    fTree->SetBranchAddress("jet_truthmatch", &jet_truthmatch);
-    fTree->SetBranchAddress("nJets", &nJets);
-    fTree->SetBranchAddress("nBTags", &nBTags);
-    fTree->SetBranchAddress("nElectrons", &nElectrons);
-    fTree->SetBranchAddress("nMuons", &nMuons);
 
     //information storage
     TH1F *h_4j3bRawEvents = new TH1F("h_4j3bRawEvents", "", 6, 0, 6);
@@ -43,40 +71,25 @@ int CheckJetsMatchingEff(TTree* fTree, const char* outName)
     mTotalUsefulEvent4j3bInc = 0;
 
     //loop over TTree
-    long nentries = fTree->GetEntriesFast();
+    long nentries = mTree->GetEntriesFast();
     for (long i = 0; i < nentries; ++i) {
         if (i % 500 == 0) std::cout<<"Processing "<<i<<std::endl;
-        fTree->GetEntry(i);
+        mTree->GetEntry(i);
+        nJets = GetTreeValue<int>(mTree, "nJets");
+        nBTags = GetTreeValue<int>(mTree, "nBTags");
+        nElectrons = GetTreeValue<int>(mTree, "nElectrons");
+        nMuons = GetTreeValue<int>(mTree, "nMuons");
         if (nElectrons + nMuons < 2) continue;
         if (nJets < 4) continue;
         if (nJets > 3 && nBTags < 3) continue;
 
-        bool b0_match = false;
-        bool b1_match = false;
-        bool b2_match = false;
-        bool b3_match = false;
-        
-        for (int iJet = 0; iJet < nJets; ++iJet) {
-            int bit_jet = jet_truthmatch->at(iJet);
-            int bit = int(TMath::Log2(bit_jet));
-            if (bit != 0) h_Bit->Fill(bit);
-            switch (bit) {
-                case BIT_B0:
-                    b0_match = true;
-                    break;
-                case BIT_B1:
-                    b1_match = true;
-                    break;
-                case BIT_B2:
-                    b2_match = true;
-                    break;
-                case BIT_B3:
-                    b3_match = true;
-                    break;
-                default:
-                    break;
-            }
-        }
+        std::map<std::string, bool> mMatchingResults;
+        mMatchingResults = JetMatching(mTree);
+        bool b0_match = mMatchingResults["B0"];
+        bool b1_match = mMatchingResults["B1"];
+        bool b2_match = mMatchingResults["B2"];
+        bool b3_match = mMatchingResults["B3"];
+
         mTotal4j3bIncRawEvents++;
         if (b0_match) h_4j3bIncRawEvents->Fill(0);
         if (b1_match) h_4j3bIncRawEvents->Fill(1);
@@ -109,7 +122,7 @@ int CheckJetsMatchingEff(TTree* fTree, const char* outName)
                 mTotalUsefulEvent4j4b++;
                 h_4j4bRawEvents->Fill(4);
                 if (b0_match) h_4j4bRawEvents->Fill(5);
-            }          
+            }
         }
     }
     std::cout<<"Loop ended, saving information to Histos..."<<std::endl;
@@ -131,21 +144,21 @@ int CheckJetsMatchingEff(TTree* fTree, const char* outName)
     h_Yields->GetXaxis()->SetBinLabel(5, "4j3bInc");
     h_Yields->GetXaxis()->SetBinLabel(6, "avail.4j3bInc");
 
-    h_4j3bRawEvents->GetXaxis()->SetBinLabel(1, "b0"); 
+    h_4j3bRawEvents->GetXaxis()->SetBinLabel(1, "b0");
     h_4j3bRawEvents->GetXaxis()->SetBinLabel(2, "b1");
     h_4j3bRawEvents->GetXaxis()->SetBinLabel(3, "b2");
     h_4j3bRawEvents->GetXaxis()->SetBinLabel(4, "b3");
     h_4j3bRawEvents->GetXaxis()->SetBinLabel(6, "all");
     h_4j3bRawEvents->GetXaxis()->SetBinLabel(5, "no_b0");
 
-    h_4j3bIncRawEvents->GetXaxis()->SetBinLabel(1, "b0"); 
+    h_4j3bIncRawEvents->GetXaxis()->SetBinLabel(1, "b0");
     h_4j3bIncRawEvents->GetXaxis()->SetBinLabel(2, "b1");
     h_4j3bIncRawEvents->GetXaxis()->SetBinLabel(3, "b2");
     h_4j3bIncRawEvents->GetXaxis()->SetBinLabel(4, "b3");
     h_4j3bIncRawEvents->GetXaxis()->SetBinLabel(6, "all");
     h_4j3bIncRawEvents->GetXaxis()->SetBinLabel(5, "no_b0");
 
-    h_4j4bRawEvents->GetXaxis()->SetBinLabel(1, "b0"); 
+    h_4j4bRawEvents->GetXaxis()->SetBinLabel(1, "b0");
     h_4j4bRawEvents->GetXaxis()->SetBinLabel(2, "b1");
     h_4j4bRawEvents->GetXaxis()->SetBinLabel(3, "b2");
     h_4j4bRawEvents->GetXaxis()->SetBinLabel(4, "b3");
@@ -162,4 +175,4 @@ int CheckJetsMatchingEff(TTree* fTree, const char* outName)
     outFile.Close();
 
     return 1;
-}    
+}

@@ -9,13 +9,26 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TKey.h>
+#include <TLeaf.h>
 #include <iostream>
 #include <ctime>
+#include <string>
 
 TFile *OpenFile(const char* FileName);
 TFile *CreateNewFile(const char* FileName);
 TTree *GetTTree(const char* fTreeName, TFile* fFile);
 const char* GenerateTimeSuffix();
 
-#endif // __UTILITIES_H
+template <typename T> T GetTreeValue(TTree* mTree, std::string fvar)
+{
+  T *fValue = nullptr;
+  TLeaf *fLeaf = mTree->GetLeaf(fvar.c_str());
+  if (fLeaf != nullptr)
+  {
+    fValue = (T *)fLeaf->GetValuePointer();
+  }
+  if (fValue == nullptr) exit(-1);
+  return *fValue;
+}
 
+#endif // __UTILITIES_H
