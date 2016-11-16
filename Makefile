@@ -1,4 +1,4 @@
-GCC = clang++
+GCC = g++
 ROOTFLAGS := $(shell root-config --cflags)
 ROOTLIBS := $(shell root-config --libs)
 SRCDIR = src
@@ -19,4 +19,3 @@ all: CheckEff
 % : utils/%.o $(OBJS)
 	echo $@
 	$(GCC) $(CFLAGS) -o $@ $(patsubst %, %.o, utils/$@) $(OBJS) $(LIBS)
-
