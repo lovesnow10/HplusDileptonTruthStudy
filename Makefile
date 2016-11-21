@@ -10,7 +10,7 @@ CFLAGS += $(ROOTFLAGS)
 CFLAGS += -I$(INCDIR)
 LIBS += $(ROOTLIBS)
 
-all: CheckEff
+all: CheckEff CheckEffLep
 # .PHONY: all
 
 %.o: %.C
