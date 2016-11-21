@@ -551,8 +551,8 @@ int CheckJetsWiLepMatchingEff(TTree* mTree, const char* outName)
             if (b1_match) h_4j4bRawEvents->Fill(1);
             if (b2_match) h_4j4bRawEvents->Fill(2);
             if (b3_match) h_4j4bRawEvents->Fill(3);
-            if (lp_match) h_4j3bIncRawEvents->Fill(4);
-            if (lm_match) h_4j3bIncRawEvents->Fill(5);
+            if (lp_match) h_4j4bRawEvents->Fill(4);
+            if (lm_match) h_4j4bRawEvents->Fill(5);
             if (b1_match && b2_match && b3_match && lm_match && lp_match) {
                 mTotalUsefulEvent4j4b++;
                 h_4j4bRawEvents->Fill(6);
