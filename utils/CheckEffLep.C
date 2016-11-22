@@ -29,6 +29,6 @@ int main(int argc, char const *argv[]) {
   TFile *inFile = OpenFile(mFileName.c_str());
   TTree *nominal = GetTTree("nominal_Loose", inFile);
   std::cout << "Start running" << std::endl;
-  CheckJetsWiLepMatchingEff(nominal, outName.c_str());
+  CheckJetsWiLepMatchingEff(nominal, outName);
   return 0;
 }

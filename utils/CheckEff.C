@@ -28,6 +28,6 @@ int main(int argc, char *argv[]) {
   TFile *inFile = OpenFile(mFileName.c_str());
   TTree *nominal = GetTTree("nominal_Loose", inFile);
   std::cout << "Start running..." << std::endl;
-  CheckJetsMatchingEff(nominal, outName.c_str());
+  CheckJetsMatchingEff(nominal, outName);
   return 0;
 }

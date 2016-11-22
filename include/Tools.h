@@ -33,7 +33,7 @@ std::map<std::string, bool> JetMatching(TTree *mEvent);
 std::map<std::string, bool> LepMatching(TTree *mEvent);
 
 // main functions
-int CheckJetsMatchingEff(TTree *fTree, const char *outName);
-int CheckJetsWiLepMatchingEff(TTree *fTree, const char *outName);
+int CheckJetsMatchingEff(TTree *fTree, std::string outName);
+int CheckJetsWiLepMatchingEff(TTree *fTree, std::string outName);
 
 #endif /* ifndef __TOOLS_H */
