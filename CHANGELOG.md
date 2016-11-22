@@ -15,3 +15,7 @@
 * Add fucntions to remove fakes and truth-tau-events
 * No longer using root-SetBranchAddress functions go attach values
 * Add CheckEffLep binary
+
+# 2016.11.22
+* Change defaut name pattern to "FileName"
+* Add Readme.md
