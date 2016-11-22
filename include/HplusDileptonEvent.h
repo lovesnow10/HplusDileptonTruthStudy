@@ -7,22 +7,16 @@
 #define __HPLUSDILEPTONEVENT_H
 
 #include <iostream>
-#include <vector>
 #include <map>
+#include <vector>
 
 #include "TLorentzVector.h"
 
-enum class ObjType
-{
-  B0, B1, B2, B3,
-  Lp = 10, Lm,
-  MET = 20,
-  Np = 30, Nm
-};
+enum class ObjType { B0, B1, B2, B3, Lp = 10, Lm, MET = 20, Np = 30, Nm };
 
 class DilepEvent {
 private:
-  //vectors for objects
+  // vectors for objects
   TLorentzVector *m_b0Momentum;
   TLorentzVector *m_b1Momentum;
   TLorentzVector *m_b2Momentum;
@@ -32,14 +26,15 @@ private:
   TLorentzVector *m_lmMomentum;
 
   TLorentzVector *m_metMomentum;
-  //map to hold all objects
-  std::map<ObjType, TLorentzVector*> m_ObjMap;
-public:
-  DilepEvent ();
-  virtual ~DilepEvent () {};
+  // map to hold all objects
+  std::map<ObjType, TLorentzVector *> m_ObjMap;
 
-  int SetVector(ObjType type, TLorentzVector* vect);
-  TLorentzVector* GetVector(ObjType type);
+public:
+  DilepEvent();
+  virtual ~DilepEvent(){};
+
+  int SetVector(ObjType type, TLorentzVector *vect);
+  TLorentzVector *GetVector(ObjType type);
 };
 
 #endif

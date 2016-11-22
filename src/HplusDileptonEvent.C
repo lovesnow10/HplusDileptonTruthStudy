@@ -5,8 +5,7 @@
 
 #include "HplusDileptonEvent.h"
 
-DilepEvent::DilepEvent()
-{
+DilepEvent::DilepEvent() {
   m_ObjMap.clear();
   m_b0Momentum = nullptr;
   m_b1Momentum = nullptr;
@@ -17,13 +16,11 @@ DilepEvent::DilepEvent()
   m_metMomentum = nullptr;
 }
 
-int DilepEvent::SetVector(ObjType type, TLorentzVector *vect)
-{
+int DilepEvent::SetVector(ObjType type, TLorentzVector *vect) {
   m_ObjMap[type] = vect;
   return 0;
 }
 
-TLorentzVector* DilepEvent::GetVector(ObjType type)
-{
-  return m_ObjMap.find(type) != m_ObjMap.end()?m_ObjMap.at(type):nullptr;
+TLorentzVector *DilepEvent::GetVector(ObjType type) {
+  return m_ObjMap.find(type) != m_ObjMap.end() ? m_ObjMap.at(type) : nullptr;
 }

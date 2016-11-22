@@ -6,21 +6,21 @@
 #ifndef __TOOLS_H
 #define __TOOLS_H
 
-#include "Utilities.h"
 #include "HplusDileptonEvent.h"
+#include "Utilities.h"
 
-#include <TFile.h>
-#include <TTree.h>
 #include <TBranch.h>
+#include <TFile.h>
 #include <TH1F.h>
-#include <TString.h>
 #include <TLorentzVector.h>
+#include <TString.h>
+#include <TTree.h>
 
 #include <iostream>
-#include <vector>
 #include <map>
+#include <vector>
 
-//fuctionalities
+// fuctionalities
 int GetLeptonPlusTruth(TTree *mEvent, TLorentzVector *LpVect);
 int GetLeptonMinusTruth(TTree *mEvent, TLorentzVector *LmVect);
 int GetLeptonPlusDetector(TTree *mEvent, TLorentzVector *LpVect);
@@ -32,8 +32,8 @@ int TauVeto(TTree *mEvent);
 std::map<std::string, bool> JetMatching(TTree *mEvent);
 std::map<std::string, bool> LepMatching(TTree *mEvent);
 
-//main functions
-int CheckJetsMatchingEff(TTree *fTree, const char* outName);
-int CheckJetsWiLepMatchingEff(TTree *fTree, const char* outName);
+// main functions
+int CheckJetsMatchingEff(TTree *fTree, const char *outName);
+int CheckJetsWiLepMatchingEff(TTree *fTree, const char *outName);
 
 #endif /* ifndef __TOOLS_H */

@@ -15,12 +15,13 @@ def GetMassPoint(mFileName):
         print 'Cannot find mass point name'
     return ms
 
+
 def GetAllHists(mFilesDict, mHistName):
     mHistDict = {}
     for _name, _file in mFilesDict.items():
         mHist = _file.Get(mHistName)
         mName = mHist.GetName()
-        mHistDict[_name] = mHist.Clone(mName+'_'+_name)
+        mHistDict[_name] = mHist.Clone(mName + '_' + _name)
     return mHistDict
 
 
@@ -37,29 +38,30 @@ def OpenAllFiles(mDirTxt):
             print 'Cannot open file %s' % (line)
     return mFilesDict
 
+
 def DrawDictPlot(Canvas, mHistDict, outName):
     Canvas.Clear()
     mHistNameList = mHistDict.keys()
-    #Setup a ghost hist for style
+    # Setup a ghost hist for style
     GhostHist = mHistDict[mHistNameList[0]].Clone("Ghost")
-    for nBin in xrange(1, GhostHist.GetNbinsX()+1):
+    for nBin in xrange(1, GhostHist.GetNbinsX() + 1):
         GhostHist.SetBinContent(nBin, 0.0)
     GhostHist.SetStats(0)
     GhostHist.SetTitle('')
     GhostHist.SetMinimum(0)
     GhostHist.SetMaximum(1.5)
 
-    #Draw hists
+    # Draw hists
     Canvas.GetPad(0).SetGridy()
     GhostHist.Draw()
 
-    #Setup real hists style and Draw
+    # Setup real hists style and Draw
     legend = rt.TLegend(0.75, 0.75, 0.95, 0.95)
     legend.AddEntry(None, outName.split('_')[1], '')
     for i, hname in enumerate(mHistNameList):
         mHist = mHistDict[hname]
         mName = mHist.GetName()
-        mHist.SetMarkerColor(i+1)
+        mHist.SetMarkerColor(i + 1)
         mHist.SetMarkerSize(1.1)
         mHist.SetMarkerStyle(20)
         mHist.Draw('same P0')
@@ -67,6 +69,7 @@ def DrawDictPlot(Canvas, mHistDict, outName):
 
     legend.Draw('same')
     Canvas.Print(outName + '.png')
+
 
 def DrawOneFile(mFileName):
     '''Function to draw eff plots in one mass point,
