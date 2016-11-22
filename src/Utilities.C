@@ -45,7 +45,7 @@ const char *GenerateTimeSuffix() {
 
 const char *GetNameSuffix(const char *fInputName) {
   std::string path = fInputName;
-  const std::regex pattern(".*\\/(.*\\.root)");
+  const std::regex pattern(".*\\/(.*)\\.root");
   std::match_results<std::string::const_iterator> result;
   bool valid = std::regex_match(path, result, pattern);
   std::string res = "";
