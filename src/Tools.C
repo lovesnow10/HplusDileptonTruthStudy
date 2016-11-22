@@ -371,7 +371,7 @@ int TauVeto(TTree *mEvent) {
   return nTau;
 }
 
-int CheckJetsMatchingEff(TTree *mTree, const char *outName) {
+int CheckJetsMatchingEff(TTree *mTree, std::string outName) {
   std::cout << "Initialzing...CheckJetsMatchingEff" << std::endl;
 
   // Variable defination
@@ -512,7 +512,7 @@ int CheckJetsMatchingEff(TTree *mTree, const char *outName) {
   h_4j4bRawEvents->GetXaxis()->SetBinLabel(5, "no_b0");
 
   std::cout << "Saving ROOT file..." << std::endl;
-  TFile outFile(outName, "RECREATE");
+  TFile outFile(outName.c_str(), "RECREATE");
   h_Yields->Write();
   h_4j3bRawEvents->Write();
   h_4j4bRawEvents->Write();
@@ -523,7 +523,7 @@ int CheckJetsMatchingEff(TTree *mTree, const char *outName) {
   return 1;
 }
 
-int CheckJetsWiLepMatchingEff(TTree *mTree, const char *outName) {
+int CheckJetsWiLepMatchingEff(TTree *mTree, std::string outName) {
   std::cout << "Initialzing...CheckJetsWiLepMatchingEff" << std::endl;
 
   // Variable defination
@@ -693,7 +693,7 @@ int CheckJetsWiLepMatchingEff(TTree *mTree, const char *outName) {
   h_4j4bRawEvents->GetXaxis()->SetBinLabel(7, "no_b0");
 
   std::cout << "Saving ROOT file..." << std::endl;
-  TFile outFile(outName, "RECREATE");
+  TFile outFile(outName.c_str(), "RECREATE");
   h_Yields->Write();
   h_4j3bRawEvents->Write();
   h_4j4bRawEvents->Write();

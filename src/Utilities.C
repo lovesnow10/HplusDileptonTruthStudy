@@ -34,16 +34,16 @@ TTree *GetTTree(const char *fTreeName, TFile *fFile) {
   return fTree;
 }
 
-const char *GenerateTimeSuffix() {
+std::string GenerateTimeSuffix() {
   time_t timenow;
   timenow = time(NULL);
   struct tm *local = localtime(&timenow);
   char *buf = new char;
   strftime(buf, 80, "%Y%m%d_%H%M", local);
-  return buf;
+  return std::string(buf);
 }
 
-const char *GetNameSuffix(const char *fInputName) {
+std::string GetNameSuffix(const char *fInputName) {
   std::string path = fInputName;
   const std::regex pattern(".*\\/(.*)\\.root");
   std::match_results<std::string::const_iterator> result;
@@ -52,5 +52,5 @@ const char *GetNameSuffix(const char *fInputName) {
   if (valid) {
     res = result[1];
   }
-  return res.c_str();
+  return res;
 }

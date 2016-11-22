@@ -17,8 +17,8 @@
 TFile *OpenFile(const char* FileName);
 TFile *CreateNewFile(const char* FileName);
 TTree *GetTTree(const char* fTreeName, TFile* fFile);
-const char* GenerateTimeSuffix();
-const char* GetNameSuffix(const char* fInputName);
+std::string GenerateTimeSuffix();
+std::string GetNameSuffix(const char* fInputName);
 
 template <typename T> T GetTreeValue(TTree* mTree, std::string fvar)
 {

@@ -9,6 +9,7 @@
 int main(int argc, char const *argv[]) {
   std::string mFileName;
   std::string mConfigStr;
+  std::string suffix;
   if (argc == 2) {
     mFileName = argv[1];
     mConfigStr = "";
@@ -19,14 +20,11 @@ int main(int argc, char const *argv[]) {
 
   std::string outName = "CheckEffLep_";
   if (mConfigStr == "--time" || mConfigStr == "-t") {
-    const char *suffix = GenerateTimeSuffix();
-    outName.append(suffix);
-    outName.append(".root");
+    suffix = GenerateTimeSuffix();
   } else {
-    const char *suffix = GetNameSuffix(mFileName.c_str());
-    outName.append(suffix);
-    outName.append(".root");
+    suffix = GetNameSuffix(mFileName.c_str());
   }
+  outName = outName + suffix + ".root";
 
   TFile *inFile = OpenFile(mFileName.c_str());
   TTree *nominal = GetTTree("nominal_Loose", inFile);
