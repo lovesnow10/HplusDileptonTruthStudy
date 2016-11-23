@@ -1,5 +1,6 @@
 #include "Tools.h"
 #include <TMath.h>
+#include "TRandom3.h"
 
 int GetLeptonPlusTruth(TTree *mEvent, TLorentzVector *LpVect) {
   std::vector<int> pdgid =
@@ -810,11 +811,13 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   TFile *outFile = CreateNewFile(outName.c_str());
   TTree *mSigTree = new TTree("signal", "signal");
   TTree *mBkgTree = new TTree("background", "background");
+  TRandom3 *rnd = new TRandom3();
 
   float PseWp_Mass, PseWm_Mass, PseTop_Mass, PseTbar_Mass, PseHplus_Mass;
   float dR_Lp_Lm, dR_B1_B2, dR_B1_B3, dR_B2_B3;
   float Pse_dR_Wp_Wm, Pse_dR_ttbar, Pse_dR_Hp_tbar;
   const int toMatch = 3;
+  int UsedForTrain;
   PseWp_Mass = 0;
   PseWm_Mass = 0;
   PseTop_Mass = 0;
@@ -827,6 +830,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   Pse_dR_Wp_Wm = 0;
   Pse_dR_ttbar = 0;
   Pse_dR_Hp_tbar = 0;
+  UsedForTrain = -1;
 
   mSigTree->Branch("PseWp_Mass", &PseWp_Mass, "PseWp_Mass/F");
   mSigTree->Branch("PseWm_Mass", &PseWm_Mass, "PseWm_Mass/F");
@@ -840,6 +844,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mSigTree->Branch("Pse_dR_Wp_Wm", &Pse_dR_Wp_Wm, "Pse_dR_Wp_Wm/F");
   mSigTree->Branch("Pse_dR_ttbar", &Pse_dR_ttbar, "Pse_dR_ttbar/F");
   mSigTree->Branch("Pse_dR_Hp_tbar", &Pse_dR_Hp_tbar, "Pse_dR_Hp_tbar/F");
+  mSigTree->Branch("UsedForTrain", &UsedForTrain, "UsedForTrain");
 
   mBkgTree->Branch("PseWp_Mass", &PseWp_Mass, "PseWp_Mass/F");
   mBkgTree->Branch("PseWm_Mass", &PseWm_Mass, "PseWm_Mass/F");
@@ -853,6 +858,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mBkgTree->Branch("Pse_dR_Wp_Wm", &Pse_dR_Wp_Wm, "Pse_dR_Wp_Wm/F");
   mBkgTree->Branch("Pse_dR_ttbar", &Pse_dR_ttbar, "Pse_dR_ttbar/F");
   mBkgTree->Branch("Pse_dR_Hp_tbar", &Pse_dR_Hp_tbar, "Pse_dR_Hp_tbar/F");
+  mBkgTree->Branch("UsedForTrain", &UsedForTrain, "UsedForTrain");
 
   // main loop
   long nentries = fTree->GetEntries();
@@ -922,6 +928,8 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
       Pse_dR_Wp_Wm = mVariables.at("Pse_dR_Wp_Wm");
       Pse_dR_ttbar = mVariables.at("Pse_dR_ttbar");
       Pse_dR_Hp_tbar = mVariables.at("Pse_dR_Hp_tbar");
+
+      UsedForTrain = (rnd->Uniform(1) < 0.5)?1:0;
 
       if (hasCorrectMatch)
         mBkgTree->Fill();
