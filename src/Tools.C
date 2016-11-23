@@ -866,6 +866,9 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
 
     // define some variables
     int nJets = GetTreeValue<int>(fTree, "nJets");
+    int nBTags = GetTreeValue<int>(fTree, "nBTags");
+    if(!(nJets > 3 && nBTags >= 3)) continue;
+
     TLorentzVector *LpVect = new TLorentzVector();
     TLorentzVector *LmVect = new TLorentzVector();
     TLorentzVector *MetVect = new TLorentzVector();
