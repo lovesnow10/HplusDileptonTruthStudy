@@ -844,7 +844,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mSigTree->Branch("Pse_dR_Wp_Wm", &Pse_dR_Wp_Wm, "Pse_dR_Wp_Wm/F");
   mSigTree->Branch("Pse_dR_ttbar", &Pse_dR_ttbar, "Pse_dR_ttbar/F");
   mSigTree->Branch("Pse_dR_Hp_tbar", &Pse_dR_Hp_tbar, "Pse_dR_Hp_tbar/F");
-  mSigTree->Branch("UsedForTrain", &UsedForTrain, "UsedForTrain");
+  mSigTree->Branch("UsedForTrain", &UsedForTrain, "UsedForTrain/I");
 
   mBkgTree->Branch("PseWp_Mass", &PseWp_Mass, "PseWp_Mass/F");
   mBkgTree->Branch("PseWm_Mass", &PseWm_Mass, "PseWm_Mass/F");
@@ -858,7 +858,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mBkgTree->Branch("Pse_dR_Wp_Wm", &Pse_dR_Wp_Wm, "Pse_dR_Wp_Wm/F");
   mBkgTree->Branch("Pse_dR_ttbar", &Pse_dR_ttbar, "Pse_dR_ttbar/F");
   mBkgTree->Branch("Pse_dR_Hp_tbar", &Pse_dR_Hp_tbar, "Pse_dR_Hp_tbar/F");
-  mBkgTree->Branch("UsedForTrain", &UsedForTrain, "UsedForTrain");
+  mBkgTree->Branch("UsedForTrain", &UsedForTrain, "UsedForTrain/I");
 
   // main loop
   long nentries = fTree->GetEntries();
