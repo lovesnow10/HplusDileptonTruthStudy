@@ -54,3 +54,40 @@ std::string GetNameSuffix(const char *fInputName) {
   }
   return res;
 }
+
+std::vector<std::vector<int>> GetCombinations(int n, int r)
+{
+  std::vector<std::vector<int>> mCombinations;
+  mCombinations.clear();
+
+  std::vector<bool> v(n);
+  std::fill(v.begin(), v.begin() + r, true);
+
+  std::vector<int> tmp;
+  tmp.clear();
+  do {
+    for (int i = 0; i < n; ++i)
+    {
+      if(v[i]) tmp.push_back(i);
+    }
+    mCombinations.push_back(tmp);
+    tmp.clear();
+  } while(std::prev_permutation(v.begin(), v.end()));
+  return mCombinations;
+}
+
+std::vector<std::vector<int>> GetPermutations(int n, int r)
+{
+  std::vector<std::vector<int>> mPermutations;
+  mPermutations.clear();
+
+  std::vector<std::vector<int>> mCombinations = GetCombinations(n, r);
+  for (auto comb : mCombinations)
+  {
+    std::sort(comb.begin(), comb.end());
+    do {
+      mPermutations.push_back(comb);
+    } while(std::next_permutation(comb.begin(), comb.end()));
+  }
+  return mPermutations;
+}

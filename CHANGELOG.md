@@ -19,3 +19,6 @@
 # 2016.11.22
 * Change defaut name pattern to "FileName"
 * Add Readme.md
+
+# 2016.11.24
+* Add new main function "PrepareBDTTrees"

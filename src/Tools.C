@@ -206,6 +206,74 @@ int GetJetDetector(TTree *mEvent, TLorentzVector *BxVect, ObjType _type) {
   return returnID;
 }
 
+int GetMetVector(TTree *mEvent, TLorentzVector *MetVect) {
+  float met_met = GetTreeValue<float>(mEvent, "met_met");
+  float met_phi = GetTreeValue<float>(mEvent, "met_phi");
+
+  MetVect->SetPtEtaPhiM(met_met, 0, met_phi, 0);
+  return 1;
+}
+
+int HasNMatchJets(TTree *mEvent, int nMatch) {
+  int isMatch = 0;
+  std::map<std::string, bool> mMatchingResults = JetMatching(mEvent);
+  if (nMatch == 4) {
+    if (mMatchingResults["B0"] && mMatchingResults["B1"] &&
+        mMatchingResults["B2"] && mMatchingResults["B3"])
+      isMatch = 1;
+  } else {
+    if (nMatch != 3)
+      std::cout << "Wrong Match Number Gived, Using Default Value 3"
+                << std::endl;
+    if (mMatchingResults["B1"] && mMatchingResults["B2"] &&
+        mMatchingResults["B3"])
+      isMatch = 1;
+  }
+  return isMatch;
+}
+
+int CheckCorrectMatch(TTree *mEvent, std::vector<int> mPermutation,
+                      int nMatch) {
+  int isCorrect = 0;
+  std::vector<int> jet_truthmatch =
+      GetTreeValue<std::vector<int>>(mEvent, "jet_truthmatch");
+  int tmpB0 = 0;
+  int tmpB1 = 0;
+  int tmpB2 = 0;
+  int tmpB3 = 0;
+
+  if (nMatch == 4) {
+    tmpB0 = jet_truthmatch.at(mPermutation.at(0));
+    tmpB1 = jet_truthmatch.at(mPermutation.at(1));
+    tmpB2 = jet_truthmatch.at(mPermutation.at(2));
+    tmpB3 = jet_truthmatch.at(mPermutation.at(3));
+
+    tmpB0 = int(TMath::Log2(tmpB0));
+    tmpB1 = int(TMath::Log2(tmpB1));
+    tmpB2 = int(TMath::Log2(tmpB2));
+    tmpB3 = int(TMath::Log2(tmpB3));
+
+    if (tmpB0 == 10 && tmpB1 == 12 && tmpB2 == 11 && tmpB3 == 13)
+      isCorrect = 1;
+  } else {
+    if (nMatch != 3)
+      std::cout << "Wrong Match Number Gived, Using Default Value 3"
+                << std::endl;
+    tmpB1 = jet_truthmatch.at(mPermutation.at(0));
+    tmpB2 = jet_truthmatch.at(mPermutation.at(1));
+    tmpB3 = jet_truthmatch.at(mPermutation.at(2));
+
+    tmpB1 = int(TMath::Log2(tmpB1));
+    tmpB2 = int(TMath::Log2(tmpB2));
+    tmpB3 = int(TMath::Log2(tmpB3));
+
+    if (tmpB1 == 12 && tmpB2 == 11 && tmpB3 == 13)
+      isCorrect = 1;
+  }
+
+  return isCorrect;
+}
+
 std::map<std::string, bool> JetMatching(TTree *mEvent) {
   const int BIT_B0 = 10;
   const int BIT_B1 = 12;
@@ -369,6 +437,39 @@ int TauVeto(TTree *mEvent) {
       nTau = 1;
   }
   return nTau;
+}
+
+std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
+  std::map<std::string, float> mVariables;
+  mVariables.clear();
+  TLorentzVector PseWp = *(mHpEvent->GetVector(ObjType::Lp)) +
+                         *(mHpEvent->GetVector(ObjType::MET)) * 0.5;
+  TLorentzVector PseWm = *(mHpEvent->GetVector(ObjType::Lm)) +
+                         *(mHpEvent->GetVector(ObjType::MET)) * 0.5;
+  TLorentzVector PseTop = *(mHpEvent->GetVector(ObjType::B1)) + PseWp;
+  TLorentzVector PseTbar = *(mHpEvent->GetVector(ObjType::B3)) + PseWm;
+  TLorentzVector PseHplus = *(mHpEvent->GetVector(ObjType::B2)) + PseTop;
+
+  mVariables["PseWp_Mass"] = PseWp.M();
+  mVariables["PseWm_Mass"] = PseWm.M();
+  mVariables["PseTop_Mass"] = PseTop.M();
+  mVariables["PseTbar_Mass"] = PseTbar.M();
+  mVariables["PseHplus_Mass"] = PseHplus.M();
+
+  mVariables["dR_Lp_Lm"] = mHpEvent->GetVector(ObjType::Lp)
+                               ->DeltaR(*(mHpEvent->GetVector(ObjType::Lm)));
+  mVariables["dR_B1_B2"] = mHpEvent->GetVector(ObjType::B1)
+                               ->DeltaR(*(mHpEvent->GetVector(ObjType::B2)));
+  mVariables["dR_B1_B3"] = mHpEvent->GetVector(ObjType::B3)
+                               ->DeltaR(*(mHpEvent->GetVector(ObjType::B1)));
+  mVariables["dR_B2_B3"] = mHpEvent->GetVector(ObjType::B2)
+                               ->DeltaR(*(mHpEvent->GetVector(ObjType::B3)));
+
+  mVariables["Pse_dR_Wp_Wm"] = PseWp.DeltaR(PseWm);
+  mVariables["Pse_dR_ttbar"] = PseTop.DeltaR(PseTbar);
+  mVariables["Pse_dR_Hp_tbar"] = PseHplus.DeltaR(PseTbar);
+
+  return mVariables;
 }
 
 int CheckJetsMatchingEff(TTree *mTree, std::string outName) {
@@ -701,5 +802,143 @@ int CheckJetsWiLepMatchingEff(TTree *mTree, std::string outName) {
   h_Bit->Write();
   outFile.Close();
 
+  return 1;
+}
+
+int PrepareBDTTrees(TTree *fTree, std::string outName) {
+  // output objects defination
+  TFile *outFile = CreateNewFile(outName.c_str());
+  TTree *mSigTree = new TTree("signal", "signal");
+  TTree *mBkgTree = new TTree("background", "background");
+
+  float PseWp_Mass, PseWm_Mass, PseTop_Mass, PseTbar_Mass, PseHplus_Mass;
+  float dR_Lp_Lm, dR_B1_B2, dR_B1_B3, dR_B2_B3;
+  float Pse_dR_Wp_Wm, Pse_dR_ttbar, Pse_dR_Hp_tbar;
+  const int toMatch = 3;
+  PseWp_Mass = 0;
+  PseWm_Mass = 0;
+  PseTop_Mass = 0;
+  PseTbar_Mass = 0;
+  PseHplus_Mass = 0;
+  dR_Lp_Lm = 0;
+  dR_B1_B2 = 0;
+  dR_B1_B3 = 0;
+  dR_B2_B3 = 0;
+  Pse_dR_Wp_Wm = 0;
+  Pse_dR_ttbar = 0;
+  Pse_dR_Hp_tbar = 0;
+
+  mSigTree->Branch("PseWp_Mass", &PseWp_Mass, "PseWp_Mass/F");
+  mSigTree->Branch("PseWm_Mass", &PseWm_Mass, "PseWm_Mass/F");
+  mSigTree->Branch("PseTop_Mass", &PseTop_Mass, "PseTop_Mass/F");
+  mSigTree->Branch("PseTbar_Mass", &PseTbar_Mass, "PseTbar_Mass/F");
+  mSigTree->Branch("PseHplus_Mass", &PseHplus_Mass, "PseHplus_Mass/F");
+  mSigTree->Branch("dR_Lp_Lm", &dR_Lp_Lm, "dR_Lp_Lm/F");
+  mSigTree->Branch("dR_B1_B2", &dR_B1_B2, "dR_B1_B2/F");
+  mSigTree->Branch("dR_B1_B3", &dR_B1_B3, "dR_B1_B3/F");
+  mSigTree->Branch("dR_B2_B3", &dR_B2_B3, "dR_B2_B3/F");
+  mSigTree->Branch("Pse_dR_Wp_Wm", &Pse_dR_Wp_Wm, "Pse_dR_Wp_Wm/F");
+  mSigTree->Branch("Pse_dR_ttbar", &Pse_dR_ttbar, "Pse_dR_ttbar/F");
+  mSigTree->Branch("Pse_dR_Hp_tbar", &Pse_dR_Hp_tbar, "Pse_dR_Hp_tbar/F");
+
+  mBkgTree->Branch("PseWp_Mass", &PseWp_Mass, "PseWp_Mass/F");
+  mBkgTree->Branch("PseWm_Mass", &PseWm_Mass, "PseWm_Mass/F");
+  mBkgTree->Branch("PseTop_Mass", &PseTop_Mass, "PseTop_Mass/F");
+  mBkgTree->Branch("PseTbar_Mass", &PseTbar_Mass, "PseTbar_Mass/F");
+  mBkgTree->Branch("PseHplus_Mass", &PseHplus_Mass, "PseHplus_Mass/F");
+  mBkgTree->Branch("dR_Lp_Lm", &dR_Lp_Lm, "dR_Lp_Lm/F");
+  mBkgTree->Branch("dR_B1_B2", &dR_B1_B2, "dR_B1_B2/F");
+  mBkgTree->Branch("dR_B1_B3", &dR_B1_B3, "dR_B1_B3/F");
+  mBkgTree->Branch("dR_B2_B3", &dR_B2_B3, "dR_B2_B3/F");
+  mBkgTree->Branch("Pse_dR_Wp_Wm", &Pse_dR_Wp_Wm, "Pse_dR_Wp_Wm/F");
+  mBkgTree->Branch("Pse_dR_ttbar", &Pse_dR_ttbar, "Pse_dR_ttbar/F");
+  mBkgTree->Branch("Pse_dR_Hp_tbar", &Pse_dR_Hp_tbar, "Pse_dR_Hp_tbar/F");
+
+  // main loop
+  long nentries = fTree->GetEntries();
+  for (long i = 0; i < nentries; i++) {
+    if (i % 500 == 0)
+      std::cout << "Processing " << i << std::endl;
+    fTree->GetEntry(i);
+
+    if (TauVeto(fTree) || FakeLeptonRemoval(fTree))
+      continue;
+
+    // define some variables
+    int nJets = GetTreeValue<int>(fTree, "nJets");
+    TLorentzVector *LpVect = new TLorentzVector();
+    TLorentzVector *LmVect = new TLorentzVector();
+    TLorentzVector *MetVect = new TLorentzVector();
+    TLorentzVector *B1Vect = new TLorentzVector();
+    TLorentzVector *B2Vect = new TLorentzVector();
+    TLorentzVector *B3Vect = new TLorentzVector();
+
+    GetLeptonPlusDetector(fTree, LpVect);
+    GetLeptonMinusDetector(fTree, LmVect);
+    GetMetVector(fTree, MetVect);
+
+    std::vector<float> jet_pt =
+        GetTreeValue<std::vector<float>>(fTree, "jet_pt");
+    std::vector<float> jet_eta =
+        GetTreeValue<std::vector<float>>(fTree, "jet_eta");
+    std::vector<float> jet_phi =
+        GetTreeValue<std::vector<float>>(fTree, "jet_phi");
+    std::vector<float> jet_e = GetTreeValue<std::vector<float>>(fTree, "jet_e");
+
+    // Get Jets permutation and loop them
+    int hasCorrectMatch = 0;
+    std::vector<std::vector<int>> mPermutations =
+        GetPermutations(nJets, toMatch);
+    for (auto mPerm : mPermutations) {
+      //      if(!hasCorrectMatch) hasCorrectMatch = CheckCorrectMatch(fTree,
+      //      mPerm, toMatch);
+      B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
+                           jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
+      B2Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(1)), jet_eta.at(mPerm.at(1)),
+                           jet_phi.at(mPerm.at(1)), jet_e.at(mPerm.at(1)));
+      B3Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(2)), jet_eta.at(mPerm.at(2)),
+                           jet_phi.at(mPerm.at(2)), jet_e.at(mPerm.at(2)));
+      DilepEvent *event = new DilepEvent();
+      event->SetVector(ObjType::B1, B1Vect);
+      event->SetVector(ObjType::B2, B2Vect);
+      event->SetVector(ObjType::B3, B3Vect);
+      event->SetVector(ObjType::Lp, LpVect);
+      event->SetVector(ObjType::Lm, LmVect);
+      event->SetVector(ObjType::MET, MetVect);
+
+      std::map<std::string, float> mVariables = GetBDTInputVars(event);
+      PseWp_Mass = mVariables.at("PseWp_Mass");
+      PseWm_Mass = mVariables.at("PseWm_Mass");
+      PseTop_Mass = mVariables.at("PseTop_Mass");
+      PseTbar_Mass = mVariables.at("PseTbar_Mass");
+      PseHplus_Mass = mVariables.at("PseHplus_Mass");
+      dR_Lp_Lm = mVariables.at("dR_Lp_Lm");
+      dR_B1_B2 = mVariables.at("dR_B1_B2");
+      dR_B1_B3 = mVariables.at("dR_B1_B3");
+      dR_B2_B3 = mVariables.at("dR_B2_B3");
+      Pse_dR_Wp_Wm = mVariables.at("Pse_dR_Wp_Wm");
+      Pse_dR_ttbar = mVariables.at("Pse_dR_ttbar");
+      Pse_dR_Hp_tbar = mVariables.at("Pse_dR_Hp_tbar");
+
+      if (hasCorrectMatch)
+        mBkgTree->Fill();
+      else {
+        int correct = CheckCorrectMatch(fTree, mPerm, toMatch);
+        if (correct) {
+          mSigTree->Fill();
+          hasCorrectMatch = correct;
+        } else {
+          mBkgTree->Fill();
+        }
+      }
+    }
+  }
+
+  // Save stuff
+  std::cout << "Saving TTrees..." << std::endl;
+  mSigTree->Write();
+  mBkgTree->Write();
+  std::cout << "Saving TFile " << outName << std::endl;
+  outFile->Close();
   return 1;
 }

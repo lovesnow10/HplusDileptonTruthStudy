@@ -7,29 +7,33 @@
 #define __UTILITIES_H
 
 #include <TFile.h>
-#include <TTree.h>
 #include <TKey.h>
 #include <TLeaf.h>
-#include <iostream>
+#include <TTree.h>
+#include <algorithm>
 #include <ctime>
+#include <iostream>
 #include <string>
 
-TFile *OpenFile(const char* FileName);
-TFile *CreateNewFile(const char* FileName);
-TTree *GetTTree(const char* fTreeName, TFile* fFile);
+TFile *OpenFile(const char *FileName);
+TFile *CreateNewFile(const char *FileName);
+TTree *GetTTree(const char *fTreeName, TFile *fFile);
 std::string GenerateTimeSuffix();
-std::string GetNameSuffix(const char* fInputName);
+std::string GetNameSuffix(const char *fInputName);
 
-template <typename T> T GetTreeValue(TTree* mTree, std::string fvar)
-{
+template <typename T> T GetTreeValue(TTree *mTree, std::string fvar) {
   T *fValue = nullptr;
   TLeaf *fLeaf = mTree->GetLeaf(fvar.c_str());
-  if (fLeaf != nullptr)
-  {
+  if (fLeaf != nullptr) {
     fValue = (T *)fLeaf->GetValuePointer();
   }
-  if (fValue == nullptr) exit(-1);
+  if (fValue == nullptr)
+    exit(-1);
   return *fValue;
 }
+
+// Combinations and permutations
+std::vector<std::vector<int>> GetCombinations(int n, int r);
+std::vector<std::vector<int>> GetPermutations(int n, int r);
 
 #endif // __UTILITIES_H
