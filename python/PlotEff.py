@@ -55,6 +55,10 @@ def DrawDictPlot(Canvas, mHistDict, outName):
     Canvas.GetPad(0).SetGridy()
     GhostHist.Draw()
 
+    # Set axis title
+    GhostHist.GetYaxis().SetTitle('Events')
+    GhostHist.GetXaxis().SetTitle('Objects')
+
     # Setup real hists style and Draw
     legend = rt.TLegend(0.75, 0.75, 0.95, 0.95)
     legend.AddEntry(None, outName.split('_')[1], '')
@@ -106,6 +110,9 @@ def DrawOneFile(mFileName):
     h_4j3b.Draw('P0')
     h_4j4b.Draw('same P0')
     h_4j3binc.Draw('same P0')
+
+    h_4j3b.GetXaxis().SetTitle('Objects')
+    h_4j3b.GetYaxis().SetTitle('Events')
 
     masspoint = GetMassPoint(mFileName)
     # Draw legend
