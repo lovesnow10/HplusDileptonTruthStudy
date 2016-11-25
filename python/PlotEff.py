@@ -73,7 +73,7 @@ def DrawDictPlot(Canvas, mHistDict, outName):
         legend.AddEntry(mName, hname, 'p')
 
     legend.Draw('same')
-    GhostHist.SetTitle(ouName)
+    GhostHist.SetTitle(outName)
     Canvas.Print(outName + '.png')
 
 
