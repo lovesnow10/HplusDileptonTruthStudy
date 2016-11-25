@@ -23,3 +23,6 @@
 # 2016.11.24
 * Add new main function "PrepareBDTTrees"
 * Change to use one lib, because some depedency-problem that I can't solve now.
+
+# 2016.11.25
+* Add new main function "TrainRecoBDT"
