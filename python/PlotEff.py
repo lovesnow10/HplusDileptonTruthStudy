@@ -56,7 +56,8 @@ def DrawDictPlot(Canvas, mHistDict, outName):
     GhostHist.Draw()
 
     # Set axis title
-    GhostHist.GetYaxis().SetTitle('Events')
+    GhostHist.GetYaxis().SetTitle('Matching Efficiency')
+    GhostHist.GetYaxis().CenterTitle()
     GhostHist.GetXaxis().SetTitle('Objects')
 
     # Setup real hists style and Draw
@@ -72,6 +73,7 @@ def DrawDictPlot(Canvas, mHistDict, outName):
         legend.AddEntry(mName, hname, 'p')
 
     legend.Draw('same')
+    GhostHist.SetTitle(ouName)
     Canvas.Print(outName + '.png')
 
 
@@ -112,7 +114,8 @@ def DrawOneFile(mFileName):
     h_4j3binc.Draw('same P0')
 
     h_4j3b.GetXaxis().SetTitle('Objects')
-    h_4j3b.GetYaxis().SetTitle('Events')
+    h_4j3b.GetYaxis().SetTitle('Matching Efficiency')
+    h_4j3b.GetYaxis().CenterTitle()
 
     masspoint = GetMassPoint(mFileName)
     # Draw legend
@@ -149,6 +152,7 @@ def DrawOneFile(mFileName):
     pave3.AddText('Total: %d' % (yields_4j3binc))
     pave3.AddText('Available: %d' % (avail_4j3binc))
     pave3.Draw()
+    h_4j3b.SetTitle(masspoint)
 
     c1.Print('Eff_' + masspoint + '.png')
 
