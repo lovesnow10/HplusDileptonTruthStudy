@@ -31,7 +31,7 @@ int main(int argc, char const *argv[]) {
   classifierOptions += ":UseBaggedBoost";
   classifierOptions += ":GradBaggingFraction=0.5";
   classifierOptions += ":nCuts=20";
-  classifierOptions += "MaxDepth=3";
+  classifierOptions += ":MaxDepth=3";
 
   std::vector<TString> mVariables;
 //  mVariables.push_back("PseWp_Mass");
@@ -46,6 +46,18 @@ int main(int argc, char const *argv[]) {
 //  mVariables.push_back("Pse_dR_Wp_Wm");
   mVariables.push_back("Pse_dR_ttbar");
 //  mVariables.push_back("Pse_dR_Hp_tbar");
+  mVariables.push_back("PseWp_Mass_NoNu");
+  mVariables.push_back("PseWm_Mass_NoNu");
+  mVariables.push_back("PseTop_Mass_NoNu");
+  mVariables.push_back("PseTbar_Mass_NoNu");
+  mVariables.push_back("PseHplus_Mass_NoNu");
+  mVariables.push_back("Pse_dR_ttbar_NoNu");
+  mVariables.push_back("Pse_dR_Hp_tbar_NoNu");
+  mVariables.push_back("PseWp_Mass_Lep");
+  mVariables.push_back("PseWm_Mass_Lep");
+  mVariables.push_back("PseTop_Mass_Lep");
+  mVariables.push_back("PseTbar_Mass_Lep");
+  mVariables.push_back("PseHplus_Mass_Lep");
 
   TCut cutSigTrain = "UsedForTrain == 1";
   TCut cutSigTest = "UsedForTrain == 0";

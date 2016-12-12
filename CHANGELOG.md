@@ -26,3 +26,6 @@
 
 # 2016.11.25
 * Add new main function "TrainRecoBDT"
+
+# 2016.12.12
+* Add new BDT input varialbes

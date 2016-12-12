@@ -15,6 +15,7 @@
 #include <TLorentzVector.h>
 #include <TString.h>
 #include <TTree.h>
+#include <TMath.h>
 
 #include <iostream>
 #include <map>
@@ -36,6 +37,7 @@ std::map<std::string, bool> JetMatching(TTree *mEvent);
 std::map<std::string, bool> LepMatching(TTree *mEvent);
 
 std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent);
+std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent);
 
 // main functions
 int CheckJetsMatchingEff(TTree *fTree, std::string outName);

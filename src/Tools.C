@@ -442,6 +442,7 @@ int TauVeto(TTree *mEvent) {
 
 std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
   std::map<std::string, float> mVariables;
+  std::map<std::string, float> mNu_Lepton = SolveLeptonDirectNeutrinos(mHpEvent);
   mVariables.clear();
   TLorentzVector PseWp = *(mHpEvent->GetVector(ObjType::Lp)) +
                          *(mHpEvent->GetVector(ObjType::MET)) * 0.5;
@@ -450,6 +451,21 @@ std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
   TLorentzVector PseTop = *(mHpEvent->GetVector(ObjType::B1)) + PseWp;
   TLorentzVector PseTbar = *(mHpEvent->GetVector(ObjType::B3)) + PseWm;
   TLorentzVector PseHplus = *(mHpEvent->GetVector(ObjType::B2)) + PseTop;
+
+  TLorentzVector PseTop_NoNu = *(mHpEvent->GetVector(ObjType::B1)) + *(mHpEvent->GetVector(ObjType::Lp));
+  TLorentzVector PseTbar_NoNu = *(mHpEvent->GetVector(ObjType::B3)) + *(mHpEvent->GetVector(ObjType::Lm));
+  TLorentzVector PseHplus_NoNu = *(mHpEvent->GetVector(ObjType::B2)) + PseTop_NoNu;
+
+  TLorentzVector Nu_Lp, Nu_Lm;
+  Nu_Lp.SetPtEtaPhiM(mNu_Lepton["Lp"], mHpEvent->GetVector(ObjType::Lp)->Eta(), mHpEvent->GetVector(ObjType::Lp)->Phi(), 0);
+  Nu_Lm.SetPtEtaPhiM(mNu_Lepton["Lm"], mHpEvent->GetVector(ObjType::Lm)->Eta(), mHpEvent->GetVector(ObjType::Lm)->Phi(), 0);
+
+  TLorentzVector PseWp_Lep = *(mHpEvent->GetVector(ObjType::Lp)) + Nu_Lp;
+  TLorentzVector PseWm_Lep = *(mHpEvent->GetVector(ObjType::Lm)) + Nu_Lm;
+
+  TLorentzVector PseTop_Lep = *(mHpEvent->GetVector(ObjType::B1)) + PseWp_Lep;
+  TLorentzVector PseTbar_Lep = *(mHpEvent->GetVector(ObjType::B3)) + PseWm_Lep;
+  TLorentzVector PseHplus_Lep = *(mHpEvent->GetVector(ObjType::B2)) + PseTop_Lep;
 
   mVariables["PseWp_Mass"] = PseWp.M();
   mVariables["PseWm_Mass"] = PseWm.M();
@@ -470,7 +486,47 @@ std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
   mVariables["Pse_dR_ttbar"] = PseTop.DeltaR(PseTbar);
   mVariables["Pse_dR_Hp_tbar"] = PseHplus.DeltaR(PseTbar);
 
+  mVariables["PseWp_Mass_NoNu"] = mHpEvent->GetVector(ObjType::Lp)->M();
+  mVariables["PseWm_Mass_NoNu"] = mHpEvent->GetVector(ObjType::Lm)->M();
+  mVariables["PseTop_Mass_NoNu"] = PseTop_NoNu.M();
+  mVariables["PseTbar_Mass_NoNu"] = PseTbar_NoNu.M();
+  mVariables["PseHplus_Mass_NoNu"] = PseHplus_NoNu.M();
+  mVariables["Pse_dR_ttbar_NoNu"] = PseTop_NoNu.DeltaR(PseTbar_NoNu);
+  mVariables["Pse_dR_Hp_tbar_NoNu"] = PseHplus_NoNu.DeltaR(PseTbar_NoNu);
+  mVariables["PseWp_Mass_Lep"] = PseWp_Lep.M();
+  mVariables["PseWm_Mass_Lep"] = PseWm_Lep.M();
+  mVariables["PseTop_Mass_Lep"] = PseTop_Lep.M();
+  mVariables["PseTbar_Mass_Lep"] = PseTbar_Lep.M();
+  mVariables["PseHplus_Mass_Lep"] = PseHplus_Lep.M();
+
   return mVariables;
+}
+
+std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent)
+{
+  float Nu_Lp, Nu_Lm, MET;
+  float Phi_Lp, Phi_Lm, Phi_MET;
+  float cosTheta_Lp, cosTheta_Lm;
+  Nu_Lp = 0;
+  Nu_Lm = 0;
+  MET = mHpEvent->GetVector(ObjType::MET)->Pt();
+  Phi_MET = mHpEvent->GetVector(ObjType::MET)->Phi();
+  Phi_Lp = mHpEvent->GetVector(ObjType::Lp)->Phi();
+  Phi_Lm = mHpEvent->GetVector(ObjType::Lm)->Phi();
+  cosTheta_Lp = mHpEvent->GetVector(ObjType::Lp)->CosTheta();
+  cosTheta_Lm = mHpEvent->GetVector(ObjType::Lm)->CosTheta();
+
+  Nu_Lp = MET * TMath::Sin(Phi_Lm - Phi_MET) / TMath::Sin(Phi_Lm - Phi_Lp);
+  Nu_Lm = MET * TMath::Sin(Phi_Lp - Phi_MET) / TMath::Sin(Phi_Lp - Phi_Lm);
+
+  Nu_Lp = Nu_Lp / cosTheta_Lp;
+  Nu_Lm = Nu_Lm / cosTheta_Lm;
+
+  std::map<std::string, float> results;
+  results["Lp"] = Nu_Lp;
+  results["Lm"] = Nu_Lm;
+
+  return results;
 }
 
 int CheckJetsMatchingEff(TTree *mTree, std::string outName) {
@@ -813,9 +869,17 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   TTree *mBkgTree = new TTree("background", "background");
   TRandom3 *rnd = new TRandom3();
 
+  //neutrio direction same as MET
   float PseWp_Mass, PseWm_Mass, PseTop_Mass, PseTbar_Mass, PseHplus_Mass;
   float dR_Lp_Lm, dR_B1_B2, dR_B1_B3, dR_B2_B3;
   float Pse_dR_Wp_Wm, Pse_dR_ttbar, Pse_dR_Hp_tbar;
+  //Add new variables
+  //No Neutrinos
+  float PseWp_Mass_NoNu, PseWm_Mass_NoNu, PseTop_Mass_NoNu, PseTbar_Mass_NoNu, PseHplus_Mass_NoNu;
+  float Pse_dR_ttbar_NoNu, Pse_dR_Hp_tbar_NoNu;
+  //Neutrino direction same as corresponding lepton
+  float PseWp_Mass_Lep, PseWm_Mass_Lep, PseTop_Mass_Lep, PseTbar_Mass_Lep, PseHplus_Mass_Lep;
+
   const int toMatch = 3;
   int UsedForTrain;
   PseWp_Mass = 0;
@@ -830,6 +894,18 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   Pse_dR_Wp_Wm = 0;
   Pse_dR_ttbar = 0;
   Pse_dR_Hp_tbar = 0;
+  PseWp_Mass_NoNu = 0;
+  PseWm_Mass_NoNu = 0;
+  PseTop_Mass_NoNu = 0;
+  PseTbar_Mass_NoNu = 0;
+  PseHplus_Mass_NoNu = 0;
+  Pse_dR_ttbar_NoNu = 0;
+  Pse_dR_Hp_tbar_NoNu = 0;
+  PseWp_Mass_Lep = 0;
+  PseWm_Mass_Lep = 0;
+  PseTop_Mass_Lep = 0;
+  PseTbar_Mass_Lep = 0;
+  PseHplus_Mass_Lep = 0;
   UsedForTrain = -1;
 
   mSigTree->Branch("PseWp_Mass", &PseWp_Mass, "PseWp_Mass/F");
@@ -845,6 +921,18 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mSigTree->Branch("Pse_dR_ttbar", &Pse_dR_ttbar, "Pse_dR_ttbar/F");
   mSigTree->Branch("Pse_dR_Hp_tbar", &Pse_dR_Hp_tbar, "Pse_dR_Hp_tbar/F");
   mSigTree->Branch("UsedForTrain", &UsedForTrain, "UsedForTrain/I");
+  mSigTree->Branch("PseWp_Mass_NoNu", &PseWp_Mass_NoNu, "PseWp_Mass_NoNu/F");
+  mSigTree->Branch("PseWm_Mass_NoNu", &PseWm_Mass_NoNu, "PseWm_Mass_NoNu/F");
+  mSigTree->Branch("PseTop_Mass_NoNu", &PseTop_Mass_NoNu, "PseTop_Mass_NoNu/F");
+  mSigTree->Branch("PseTbar_Mass_NoNu", &PseTbar_Mass_NoNu, "PseTbar_Mass_NoNu/F");
+  mSigTree->Branch("PseHplus_Mass_NoNu", &PseHplus_Mass_NoNu, "PseHplus_Mass_NoNu/F");
+  mSigTree->Branch("Pse_dR_ttbar_NoNu", &Pse_dR_ttbar_NoNu, "Pse_dR_ttbar_NoNu/F");
+  mSigTree->Branch("Pse_dR_Hp_tbar_NoNu", &Pse_dR_Hp_tbar_NoNu, "Pse_dR_Hp_tbar_NoNu/F");
+  mSigTree->Branch("PseWp_Mass_Lep", &PseWp_Mass_Lep, "PseWp_Mass_Lep/F");
+  mSigTree->Branch("PseWm_Mass_Lep", &PseWm_Mass_Lep, "PseWm_Mass_Lep/F");
+  mSigTree->Branch("PseTop_Mass_Lep", &PseTop_Mass_Lep, "PseTop_Mass_Lep/F");
+  mSigTree->Branch("PseTbar_Mass_Lep", &PseTbar_Mass_Lep, "PseTbar_Mass_Lep/F");
+  mSigTree->Branch("PseHplus_Mass_Lep", &PseHplus_Mass_Lep, "PseHplus_Mass_Lep/F");
 
   mBkgTree->Branch("PseWp_Mass", &PseWp_Mass, "PseWp_Mass/F");
   mBkgTree->Branch("PseWm_Mass", &PseWm_Mass, "PseWm_Mass/F");
@@ -859,6 +947,18 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mBkgTree->Branch("Pse_dR_ttbar", &Pse_dR_ttbar, "Pse_dR_ttbar/F");
   mBkgTree->Branch("Pse_dR_Hp_tbar", &Pse_dR_Hp_tbar, "Pse_dR_Hp_tbar/F");
   mBkgTree->Branch("UsedForTrain", &UsedForTrain, "UsedForTrain/I");
+  mBkgTree->Branch("PseWp_Mass_NoNu", &PseWp_Mass_NoNu, "PseWp_Mass_NoNu/F");
+  mBkgTree->Branch("PseWm_Mass_NoNu", &PseWm_Mass_NoNu, "PseWm_Mass_NoNu/F");
+  mBkgTree->Branch("PseTop_Mass_NoNu", &PseTop_Mass_NoNu, "PseTop_Mass_NoNu/F");
+  mBkgTree->Branch("PseTbar_Mass_NoNu", &PseTbar_Mass_NoNu, "PseTbar_Mass_NoNu/F");
+  mBkgTree->Branch("PseHplus_Mass_NoNu", &PseHplus_Mass_NoNu, "PseHplus_Mass_NoNu/F");
+  mBkgTree->Branch("Pse_dR_ttbar_NoNu", &Pse_dR_ttbar_NoNu, "Pse_dR_ttbar_NoNu/F");
+  mBkgTree->Branch("Pse_dR_Hp_tbar_NoNu", &Pse_dR_Hp_tbar_NoNu, "Pse_dR_Hp_tbar_NoNu/F");
+  mBkgTree->Branch("PseWp_Mass_Lep", &PseWp_Mass_Lep, "PseWp_Mass_Lep/F");
+  mBkgTree->Branch("PseWm_Mass_Lep", &PseWm_Mass_Lep, "PseWm_Mass_Lep/F");
+  mBkgTree->Branch("PseTop_Mass_Lep", &PseTop_Mass_Lep, "PseTop_Mass_Lep/F");
+  mBkgTree->Branch("PseTbar_Mass_Lep", &PseTbar_Mass_Lep, "PseTbar_Mass_Lep/F");
+  mBkgTree->Branch("PseHplus_Mass_Lep", &PseHplus_Mass_Lep, "PseHplus_Mass_Lep/F");
 
   // main loop
   long nentries = fTree->GetEntries();
@@ -873,7 +973,8 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     // define some variables
     int nJets = GetTreeValue<int>(fTree, "nJets");
     int nBTags = GetTreeValue<int>(fTree, "nBTags");
-    if(!(nJets > 3 && nBTags >= 3)) continue;
+    //if(!(nJets > 3 && nBTags >= 3)) continue; //AnaRegion = SR (Tight Def)
+    if (!(nJets >= 3 && nBTags > 0)) continue; //AnaRegion = Loose Def
 
     TLorentzVector *LpVect = new TLorentzVector();
     TLorentzVector *LmVect = new TLorentzVector();
@@ -928,6 +1029,18 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
       Pse_dR_Wp_Wm = mVariables.at("Pse_dR_Wp_Wm");
       Pse_dR_ttbar = mVariables.at("Pse_dR_ttbar");
       Pse_dR_Hp_tbar = mVariables.at("Pse_dR_Hp_tbar");
+      PseWp_Mass_NoNu = mVariables.at("PseWp_Mass_NoNu");
+      PseWm_Mass_NoNu = mVariables.at("PseWm_Mass_NoNu");
+      PseTop_Mass_NoNu = mVariables.at("PseTop_Mass_NoNu");
+      PseTbar_Mass_NoNu = mVariables.at("PseTbar_Mass_NoNu");
+      PseHplus_Mass_NoNu = mVariables.at("PseHplus_Mass_NoNu");
+      Pse_dR_ttbar_NoNu = mVariables.at("Pse_dR_ttbar_NoNu");
+      Pse_dR_Hp_tbar_NoNu = mVariables.at("Pse_dR_Hp_tbar_NoNu");
+      PseWp_Mass_Lep = mVariables.at("PseWp_Mass_Lep");
+      PseWm_Mass_Lep = mVariables.at("PseWm_Mass_Lep");
+      PseTop_Mass_Lep = mVariables.at("PseTop_Mass_Lep");
+      PseTbar_Mass_Lep = mVariables.at("PseTbar_Mass_Lep");
+      PseHplus_Mass_Lep = mVariables.at("PseHplus_Mass_Lep");
 
       UsedForTrain = (rnd->Uniform(1) < 0.5)?1:0;
 
