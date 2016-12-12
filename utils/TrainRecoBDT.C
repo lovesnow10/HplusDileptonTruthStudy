@@ -37,8 +37,8 @@ int main(int argc, char const *argv[]) {
 //  mVariables.push_back("PseWp_Mass");
 //  mVariables.push_back("PseWm_Mass");
 //  mVariables.push_back("PseTop_Mass");
-  mVariables.push_back("PseTbar_Mass");
-  mVariables.push_back("PseHplus_Mass");
+//  mVariables.push_back("PseTbar_Mass");
+//  mVariables.push_back("PseHplus_Mass");
 //  mVariables.push_back("dR_Lp_Lm");
   mVariables.push_back("dR_B1_B2");
   mVariables.push_back("dR_B1_B3");
@@ -55,7 +55,7 @@ int main(int argc, char const *argv[]) {
   mVariables.push_back("Pse_dR_Hp_tbar_NoNu");
   mVariables.push_back("PseWp_Mass_Lep");
   mVariables.push_back("PseWm_Mass_Lep");
-  mVariables.push_back("PseTop_Mass_Lep");
+//  mVariables.push_back("PseTop_Mass_Lep");
   mVariables.push_back("PseTbar_Mass_Lep");
   mVariables.push_back("PseHplus_Mass_Lep");
 
