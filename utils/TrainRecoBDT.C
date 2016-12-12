@@ -48,10 +48,10 @@ int main(int argc, char const *argv[]) {
 //  mVariables.push_back("Pse_dR_Hp_tbar");
 //  mVariables.push_back("PseWp_Mass_NoNu");
 //  mVariables.push_back("PseWm_Mass_NoNu");
-  mVariables.push_back("PseTop_Mass_NoNu");
+//  mVariables.push_back("PseTop_Mass_NoNu");
   mVariables.push_back("PseTbar_Mass_NoNu");
   mVariables.push_back("PseHplus_Mass_NoNu");
-//  mVariables.push_back("Pse_dR_ttbar_NoNu");
+  mVariables.push_back("Pse_dR_ttbar_NoNu");
   mVariables.push_back("Pse_dR_Hp_tbar_NoNu");
 //  mVariables.push_back("PseWp_Mass_Lep");
 //  mVariables.push_back("PseWm_Mass_Lep");
