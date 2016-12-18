@@ -14,6 +14,8 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <sstream>
 
 TFile *OpenFile(const char *FileName);
 TFile *CreateNewFile(const char *FileName);
@@ -35,5 +37,8 @@ template <typename T> T GetTreeValue(TTree *mTree, std::string fvar) {
 // Combinations and permutations
 std::vector<std::vector<int>> GetCombinations(int n, int r);
 std::vector<std::vector<int>> GetPermutations(int n, int r);
+
+// Read variables from TMVA xml file
+void grabVariableList(TString WeightFile, std::vector<TString>& mVarialbes);
 
 #endif // __UTILITIES_H
