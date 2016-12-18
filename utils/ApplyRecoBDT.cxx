@@ -109,7 +109,7 @@ int main(int argc, char const *argv[]) {
       event->SetVector(ObjType::MET, MetVect);
 
       std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
-      mVarialbes.clear();
+      //mVarialbes.clear();
       for (auto _var : variables) {
         mVarialbes.at(_var) = tmpVariables.at(_var.Data());
       }
