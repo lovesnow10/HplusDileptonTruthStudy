@@ -29,3 +29,6 @@
 
 # 2016.12.12
 * Add new BDT input varialbes
+
+3 2016.12.18
+* Add new main function "ApplyRecoBDT"
