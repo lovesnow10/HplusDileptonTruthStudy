@@ -16,6 +16,7 @@
 #include <TString.h>
 #include <TTree.h>
 #include <TMath.h>
+#include <TMVA/Reader.h>
 
 #include <iostream>
 #include <map>
@@ -38,6 +39,8 @@ std::map<std::string, bool> LepMatching(TTree *mEvent);
 
 std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent);
 std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent);
+
+float GetMaxBDTScore(TTree *mEvent, TMVA::Reader *mReader, std::map<TString, float> &mVariables, TString MethodName, int toMatch = 3);
 
 // main functions
 int CheckJetsMatchingEff(TTree *fTree, std::string outName);

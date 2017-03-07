@@ -529,6 +529,62 @@ std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent)
   return results;
 }
 
+float GetMaxBDTScore(TTree *mEvent, TMVA::Reader *mReader, std::map<TString, float> &mVariables, TString MethodName, int toMatch)
+{
+    float mMaxBDTScore = -9999.0;
+
+    TLorentzVector *LpVect = new TLorentzVector();
+    TLorentzVector *LmVect = new TLorentzVector();
+    TLorentzVector *MetVect = new TLorentzVector();
+    TLorentzVector *B1Vect = new TLorentzVector();
+    TLorentzVector *B2Vect = new TLorentzVector();
+    TLorentzVector *B3Vect = new TLorentzVector();
+
+    GetLeptonPlusDetector(mEvent, LpVect);
+    GetLeptonMinusDetector(mEvent, LmVect);
+    GetMetVector(mEvent, MetVect);
+
+    std::vector<float> jet_pt =
+        GetTreeValue<std::vector<float>>(mEvent, "jet_pt");
+    std::vector<float> jet_eta =
+        GetTreeValue<std::vector<float>>(mEvent, "jet_eta");
+    std::vector<float> jet_phi =
+        GetTreeValue<std::vector<float>>(mEvent, "jet_phi");
+    std::vector<float> jet_e = GetTreeValue<std::vector<float>>(mEvent, "jet_e");
+
+    int nJets = GetTreeValue<int>(mEvent, "nJets");
+
+    // Get jets permutation and loop them
+    std::vector<std::vector<int>> mPermutations =
+        GetPermutations(nJets, toMatch);
+    for (auto mPerm : mPermutations) {
+      B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
+                           jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
+      B2Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(1)), jet_eta.at(mPerm.at(1)),
+                           jet_phi.at(mPerm.at(1)), jet_e.at(mPerm.at(1)));
+      B3Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(2)), jet_eta.at(mPerm.at(2)),
+                           jet_phi.at(mPerm.at(2)), jet_e.at(mPerm.at(2)));
+      DilepEvent *event = new DilepEvent();
+      event->SetVector(ObjType::B1, B1Vect);
+      event->SetVector(ObjType::B2, B2Vect);
+      event->SetVector(ObjType::B3, B3Vect);
+      event->SetVector(ObjType::Lp, LpVect);
+      event->SetVector(ObjType::Lm, LmVect);
+      event->SetVector(ObjType::MET, MetVect);
+
+      std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
+      //mVarialbes.clear();
+      for (auto _var : mVariables) {
+        _var.second = tmpVariables.at(_var.first.Data());
+      }
+      float tmpBDTscore = mReader->EvaluateMVA(MethodName);
+
+      mMaxBDTScore = (tmpBDTscore > mMaxBDTScore) ? tmpBDTscore : mMaxBDTScore;
+    }
+
+    return mMaxBDTScore;
+}
+
 int CheckJetsMatchingEff(TTree *mTree, std::string outName) {
   std::cout << "Initialzing...CheckJetsMatchingEff" << std::endl;
 
@@ -1042,7 +1098,9 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
       PseTbar_Mass_Lep = mVariables.at("PseTbar_Mass_Lep");
       PseHplus_Mass_Lep = mVariables.at("PseHplus_Mass_Lep");
 
-      UsedForTrain = (rnd->Uniform(1) < 0.5)?1:0;
+      UsedForTrain = (rnd->Uniform(1) < 0.66)?1:0;
+      if (UsedForTrain)
+      UsedForTrain = (rnd->Uniform(1) < 0.5)?1:-1;
 
       if (hasCorrectMatch)
         mBkgTree->Fill();
