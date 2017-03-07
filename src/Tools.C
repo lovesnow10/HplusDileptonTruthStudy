@@ -1118,8 +1118,8 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
 
   // Save stuff
   std::cout << "Saving TTrees..." << std::endl;
-  mSigTree->Write();
-  mBkgTree->Write();
+  mSigTree->Write(0, TObject::kOverwrite);
+  mBkgTree->Write(0, TObject::kOverwrite);
   std::cout << "Saving TFile " << outName << std::endl;
   outFile->Close();
   return 1;
