@@ -589,15 +589,13 @@ GetAllBDTScore(TTree *mEvent, TMVA::Reader *mReader,
   return mBDTScoresMap;
 }
 
-std::vector<int> GetMaxBDTScore(const std::map<std::vector<int>, float> &mScoreMap,
-                   float &mMaxScore)
-{
+std::vector<int>
+GetMaxBDTScore(const std::map<std::vector<int>, float> &mScoreMap,
+               float &mMaxScore) {
   mMaxScore = -9999.0;
   std::vector<int> mPerm;
-  for (auto mScore : mScoreMap)
-  {
-    if (mScore.second > mMaxScore)
-    {
+  for (auto mScore : mScoreMap) {
+    if (mScore.second > mMaxScore) {
       mMaxScore = mScore.second;
       mPerm = mScore.first;
     }
@@ -1122,6 +1120,11 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     if (!(nJets >= 3 && nBTags > 0))
       continue; // AnaRegion = Loose Def
 
+    int UsedForApply = (rnd->Uniform(0, 1) < 0.333) ? 1 : 0;
+    if (UsedForApply) {
+      mAppTree->Fill();
+      continue;
+    }
     TLorentzVector *LpVect = new TLorentzVector();
     TLorentzVector *LmVect = new TLorentzVector();
     TLorentzVector *MetVect = new TLorentzVector();
@@ -1188,15 +1191,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
       PseTbar_Mass_Lep = mVariables.at("PseTbar_Mass_Lep");
       PseHplus_Mass_Lep = mVariables.at("PseHplus_Mass_Lep");
 
-      UsedForTrain = (rnd->Uniform(1) < 0.66) ? 1 : 0;
-      if (UsedForTrain)
-        UsedForTrain = (rnd->Uniform(1) < 0.5) ? 1 : -1;
-
-      if (UsedForTrain < 0)
-      {
-        mAppTree->Fill();
-        continue;
-      }
+      UsedForTrain = (rnd->Uniform(1) < 0.5) ? 1 : 0;
 
       if (hasCorrectMatch)
         mBkgTree->Fill();
