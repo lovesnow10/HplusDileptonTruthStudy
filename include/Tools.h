@@ -13,10 +13,10 @@
 #include <TFile.h>
 #include <TH1F.h>
 #include <TLorentzVector.h>
+#include <TMVA/Reader.h>
+#include <TMath.h>
 #include <TString.h>
 #include <TTree.h>
-#include <TMath.h>
-#include <TMVA/Reader.h>
 
 #include <iostream>
 #include <map>
@@ -33,18 +33,28 @@ int CheckTrueDilepton(TTree *mEvent);
 int FakeLeptonRemoval(TTree *mEvent);
 int TauVeto(TTree *mEvent);
 int HasNMatchJets(TTree *mEvent, int nMatch = 3);
-int CheckCorrectMatch(TTree *mEvent, std::vector<int> mPermutation, int nMatch = 3);
+int CheckCorrectMatch(TTree *mEvent, std::vector<int> mPermutation,
+                      int nMatch = 3);
 std::map<std::string, bool> JetMatching(TTree *mEvent);
 std::map<std::string, bool> LepMatching(TTree *mEvent);
 
 std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent);
 std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent);
 
-float GetMaxBDTScore(TTree *mEvent, TMVA::Reader *mReader, std::map<TString, float> &mVariables, TString MethodName, int toMatch = 3);
+std::map<std::vector<int>, float>
+GetAllBDTScore(TTree *mEvent, TMVA::Reader *mReader,
+               std::map<TString, float> &mVariables, TString MethodName,
+               int toMatch = 3);
+std::vector<int> GetMaxBDTScore(const std::map<std::vector<int>, float> &mScoreMap,
+                   float &mMaxScore);
+float GetMaxBDTScore(TTree *mEvent, TMVA::Reader *mReader,
+                     std::map<TString, float> &mVariables, TString MethodName,
+                     int toMatch = 3);
 
 // main functions
 int CheckJetsMatchingEff(TTree *fTree, std::string outName);
 int CheckJetsWiLepMatchingEff(TTree *fTree, std::string outName);
 int PrepareBDTTrees(TTree *fTree, std::string outName);
+int ApplyRecoBDT() { return 0;};
 
 #endif /* ifndef __TOOLS_H */

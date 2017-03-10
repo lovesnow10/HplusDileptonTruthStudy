@@ -1,6 +1,6 @@
+#include "TRandom3.h"
 #include "Tools.h"
 #include <TMath.h>
-#include "TRandom3.h"
 
 int GetLeptonPlusTruth(TTree *mEvent, TLorentzVector *LpVect) {
   std::vector<int> pdgid =
@@ -442,7 +442,8 @@ int TauVeto(TTree *mEvent) {
 
 std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
   std::map<std::string, float> mVariables;
-  std::map<std::string, float> mNu_Lepton = SolveLeptonDirectNeutrinos(mHpEvent);
+  std::map<std::string, float> mNu_Lepton =
+      SolveLeptonDirectNeutrinos(mHpEvent);
   mVariables.clear();
   TLorentzVector PseWp = *(mHpEvent->GetVector(ObjType::Lp)) +
                          *(mHpEvent->GetVector(ObjType::MET)) * 0.5;
@@ -452,20 +453,26 @@ std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
   TLorentzVector PseTbar = *(mHpEvent->GetVector(ObjType::B3)) + PseWm;
   TLorentzVector PseHplus = *(mHpEvent->GetVector(ObjType::B2)) + PseTop;
 
-  TLorentzVector PseTop_NoNu = *(mHpEvent->GetVector(ObjType::B1)) + *(mHpEvent->GetVector(ObjType::Lp));
-  TLorentzVector PseTbar_NoNu = *(mHpEvent->GetVector(ObjType::B3)) + *(mHpEvent->GetVector(ObjType::Lm));
-  TLorentzVector PseHplus_NoNu = *(mHpEvent->GetVector(ObjType::B2)) + PseTop_NoNu;
+  TLorentzVector PseTop_NoNu =
+      *(mHpEvent->GetVector(ObjType::B1)) + *(mHpEvent->GetVector(ObjType::Lp));
+  TLorentzVector PseTbar_NoNu =
+      *(mHpEvent->GetVector(ObjType::B3)) + *(mHpEvent->GetVector(ObjType::Lm));
+  TLorentzVector PseHplus_NoNu =
+      *(mHpEvent->GetVector(ObjType::B2)) + PseTop_NoNu;
 
   TLorentzVector Nu_Lp, Nu_Lm;
-  Nu_Lp.SetPtEtaPhiM(mNu_Lepton["Lp"], mHpEvent->GetVector(ObjType::Lp)->Eta(), mHpEvent->GetVector(ObjType::Lp)->Phi(), 0);
-  Nu_Lm.SetPtEtaPhiM(mNu_Lepton["Lm"], mHpEvent->GetVector(ObjType::Lm)->Eta(), mHpEvent->GetVector(ObjType::Lm)->Phi(), 0);
+  Nu_Lp.SetPtEtaPhiM(mNu_Lepton["Lp"], mHpEvent->GetVector(ObjType::Lp)->Eta(),
+                     mHpEvent->GetVector(ObjType::Lp)->Phi(), 0);
+  Nu_Lm.SetPtEtaPhiM(mNu_Lepton["Lm"], mHpEvent->GetVector(ObjType::Lm)->Eta(),
+                     mHpEvent->GetVector(ObjType::Lm)->Phi(), 0);
 
   TLorentzVector PseWp_Lep = *(mHpEvent->GetVector(ObjType::Lp)) + Nu_Lp;
   TLorentzVector PseWm_Lep = *(mHpEvent->GetVector(ObjType::Lm)) + Nu_Lm;
 
   TLorentzVector PseTop_Lep = *(mHpEvent->GetVector(ObjType::B1)) + PseWp_Lep;
   TLorentzVector PseTbar_Lep = *(mHpEvent->GetVector(ObjType::B3)) + PseWm_Lep;
-  TLorentzVector PseHplus_Lep = *(mHpEvent->GetVector(ObjType::B2)) + PseTop_Lep;
+  TLorentzVector PseHplus_Lep =
+      *(mHpEvent->GetVector(ObjType::B2)) + PseTop_Lep;
 
   mVariables["PseWp_Mass"] = PseWp.M();
   mVariables["PseWm_Mass"] = PseWm.M();
@@ -502,8 +509,7 @@ std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
   return mVariables;
 }
 
-std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent)
-{
+std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent) {
   float Nu_Lp, Nu_Lm, MET;
   float Phi_Lp, Phi_Lm, Phi_MET;
   float cosTheta_Lp, cosTheta_Lm;
@@ -529,60 +535,130 @@ std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent)
   return results;
 }
 
-float GetMaxBDTScore(TTree *mEvent, TMVA::Reader *mReader, std::map<TString, float> &mVariables, TString MethodName, int toMatch)
-{
-    float mMaxBDTScore = -9999.0;
+std::map<std::vector<int>, float>
+GetAllBDTScore(TTree *mEvent, TMVA::Reader *mReader,
+               std::map<TString, float> &mVariables, TString MethodName,
+               int toMatch) {
+  std::map<std::vector<int>, float> mBDTScoresMap;
 
-    TLorentzVector *LpVect = new TLorentzVector();
-    TLorentzVector *LmVect = new TLorentzVector();
-    TLorentzVector *MetVect = new TLorentzVector();
-    TLorentzVector *B1Vect = new TLorentzVector();
-    TLorentzVector *B2Vect = new TLorentzVector();
-    TLorentzVector *B3Vect = new TLorentzVector();
+  TLorentzVector *LpVect = new TLorentzVector();
+  TLorentzVector *LmVect = new TLorentzVector();
+  TLorentzVector *MetVect = new TLorentzVector();
+  TLorentzVector *B1Vect = new TLorentzVector();
+  TLorentzVector *B2Vect = new TLorentzVector();
+  TLorentzVector *B3Vect = new TLorentzVector();
 
-    GetLeptonPlusDetector(mEvent, LpVect);
-    GetLeptonMinusDetector(mEvent, LmVect);
-    GetMetVector(mEvent, MetVect);
+  GetLeptonPlusDetector(mEvent, LpVect);
+  GetLeptonMinusDetector(mEvent, LmVect);
+  GetMetVector(mEvent, MetVect);
 
-    std::vector<float> jet_pt =
-        GetTreeValue<std::vector<float>>(mEvent, "jet_pt");
-    std::vector<float> jet_eta =
-        GetTreeValue<std::vector<float>>(mEvent, "jet_eta");
-    std::vector<float> jet_phi =
-        GetTreeValue<std::vector<float>>(mEvent, "jet_phi");
-    std::vector<float> jet_e = GetTreeValue<std::vector<float>>(mEvent, "jet_e");
+  std::vector<float> jet_pt =
+      GetTreeValue<std::vector<float>>(mEvent, "jet_pt");
+  std::vector<float> jet_eta =
+      GetTreeValue<std::vector<float>>(mEvent, "jet_eta");
+  std::vector<float> jet_phi =
+      GetTreeValue<std::vector<float>>(mEvent, "jet_phi");
+  std::vector<float> jet_e = GetTreeValue<std::vector<float>>(mEvent, "jet_e");
 
-    int nJets = GetTreeValue<int>(mEvent, "nJets");
+  int nJets = GetTreeValue<int>(mEvent, "nJets");
 
-    // Get jets permutation and loop them
-    std::vector<std::vector<int>> mPermutations =
-        GetPermutations(nJets, toMatch);
-    for (auto mPerm : mPermutations) {
-      B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
-                           jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
-      B2Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(1)), jet_eta.at(mPerm.at(1)),
-                           jet_phi.at(mPerm.at(1)), jet_e.at(mPerm.at(1)));
-      B3Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(2)), jet_eta.at(mPerm.at(2)),
-                           jet_phi.at(mPerm.at(2)), jet_e.at(mPerm.at(2)));
-      DilepEvent *event = new DilepEvent();
-      event->SetVector(ObjType::B1, B1Vect);
-      event->SetVector(ObjType::B2, B2Vect);
-      event->SetVector(ObjType::B3, B3Vect);
-      event->SetVector(ObjType::Lp, LpVect);
-      event->SetVector(ObjType::Lm, LmVect);
-      event->SetVector(ObjType::MET, MetVect);
+  // Get jets permutation and loop them
+  std::vector<std::vector<int>> mPermutations = GetPermutations(nJets, toMatch);
+  for (auto mPerm : mPermutations) {
+    B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
+                         jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
+    B2Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(1)), jet_eta.at(mPerm.at(1)),
+                         jet_phi.at(mPerm.at(1)), jet_e.at(mPerm.at(1)));
+    B3Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(2)), jet_eta.at(mPerm.at(2)),
+                         jet_phi.at(mPerm.at(2)), jet_e.at(mPerm.at(2)));
+    DilepEvent *event = new DilepEvent();
+    event->SetVector(ObjType::B1, B1Vect);
+    event->SetVector(ObjType::B2, B2Vect);
+    event->SetVector(ObjType::B3, B3Vect);
+    event->SetVector(ObjType::Lp, LpVect);
+    event->SetVector(ObjType::Lm, LmVect);
+    event->SetVector(ObjType::MET, MetVect);
 
-      std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
-      //mVarialbes.clear();
-      for (auto _var : mVariables) {
-        _var.second = tmpVariables.at(_var.first.Data());
-      }
-      float tmpBDTscore = mReader->EvaluateMVA(MethodName);
-
-      mMaxBDTScore = (tmpBDTscore > mMaxBDTScore) ? tmpBDTscore : mMaxBDTScore;
+    std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
+    // mVarialbes.clear();
+    for (auto _var : mVariables) {
+      _var.second = tmpVariables.at(_var.first.Data());
     }
+    mBDTScoresMap[mPerm] = mReader->EvaluateMVA(MethodName);
+  }
+  return mBDTScoresMap;
+}
 
-    return mMaxBDTScore;
+std::vector<int> GetMaxBDTScore(const std::map<std::vector<int>, float> &mScoreMap,
+                   float &mMaxScore)
+{
+  mMaxScore = -9999.0;
+  std::vector<int> mPerm;
+  for (auto mScore : mScoreMap)
+  {
+    if (mScore.second > mMaxScore)
+    {
+      mMaxScore = mScore.second;
+      mPerm = mScore.first;
+    }
+  }
+  return mPerm;
+}
+
+float GetMaxBDTScore(TTree *mEvent, TMVA::Reader *mReader,
+                     std::map<TString, float> &mVariables, TString MethodName,
+                     int toMatch) {
+  float mMaxBDTScore = -9999.0;
+
+  TLorentzVector *LpVect = new TLorentzVector();
+  TLorentzVector *LmVect = new TLorentzVector();
+  TLorentzVector *MetVect = new TLorentzVector();
+  TLorentzVector *B1Vect = new TLorentzVector();
+  TLorentzVector *B2Vect = new TLorentzVector();
+  TLorentzVector *B3Vect = new TLorentzVector();
+
+  GetLeptonPlusDetector(mEvent, LpVect);
+  GetLeptonMinusDetector(mEvent, LmVect);
+  GetMetVector(mEvent, MetVect);
+
+  std::vector<float> jet_pt =
+      GetTreeValue<std::vector<float>>(mEvent, "jet_pt");
+  std::vector<float> jet_eta =
+      GetTreeValue<std::vector<float>>(mEvent, "jet_eta");
+  std::vector<float> jet_phi =
+      GetTreeValue<std::vector<float>>(mEvent, "jet_phi");
+  std::vector<float> jet_e = GetTreeValue<std::vector<float>>(mEvent, "jet_e");
+
+  int nJets = GetTreeValue<int>(mEvent, "nJets");
+
+  // Get jets permutation and loop them
+  std::vector<std::vector<int>> mPermutations = GetPermutations(nJets, toMatch);
+  for (auto mPerm : mPermutations) {
+    B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
+                         jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
+    B2Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(1)), jet_eta.at(mPerm.at(1)),
+                         jet_phi.at(mPerm.at(1)), jet_e.at(mPerm.at(1)));
+    B3Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(2)), jet_eta.at(mPerm.at(2)),
+                         jet_phi.at(mPerm.at(2)), jet_e.at(mPerm.at(2)));
+    DilepEvent *event = new DilepEvent();
+    event->SetVector(ObjType::B1, B1Vect);
+    event->SetVector(ObjType::B2, B2Vect);
+    event->SetVector(ObjType::B3, B3Vect);
+    event->SetVector(ObjType::Lp, LpVect);
+    event->SetVector(ObjType::Lm, LmVect);
+    event->SetVector(ObjType::MET, MetVect);
+
+    std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
+    // mVarialbes.clear();
+    for (auto _var : mVariables) {
+      _var.second = tmpVariables.at(_var.first.Data());
+    }
+    float tmpBDTscore = mReader->EvaluateMVA(MethodName);
+
+    mMaxBDTScore = (tmpBDTscore > mMaxBDTScore) ? tmpBDTscore : mMaxBDTScore;
+  }
+
+  return mMaxBDTScore;
 }
 
 int CheckJetsMatchingEff(TTree *mTree, std::string outName) {
@@ -923,18 +999,21 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   TFile *outFile = CreateNewFile(outName.c_str());
   TTree *mSigTree = new TTree("signal", "signal");
   TTree *mBkgTree = new TTree("background", "background");
+  TTree *mAppTree = fTree->CloneTree(0);
   TRandom3 *rnd = new TRandom3();
 
-  //neutrio direction same as MET
+  // neutrio direction same as MET
   float PseWp_Mass, PseWm_Mass, PseTop_Mass, PseTbar_Mass, PseHplus_Mass;
   float dR_Lp_Lm, dR_B1_B2, dR_B1_B3, dR_B2_B3;
   float Pse_dR_Wp_Wm, Pse_dR_ttbar, Pse_dR_Hp_tbar;
-  //Add new variables
-  //No Neutrinos
-  float PseWp_Mass_NoNu, PseWm_Mass_NoNu, PseTop_Mass_NoNu, PseTbar_Mass_NoNu, PseHplus_Mass_NoNu;
+  // Add new variables
+  // No Neutrinos
+  float PseWp_Mass_NoNu, PseWm_Mass_NoNu, PseTop_Mass_NoNu, PseTbar_Mass_NoNu,
+      PseHplus_Mass_NoNu;
   float Pse_dR_ttbar_NoNu, Pse_dR_Hp_tbar_NoNu;
-  //Neutrino direction same as corresponding lepton
-  float PseWp_Mass_Lep, PseWm_Mass_Lep, PseTop_Mass_Lep, PseTbar_Mass_Lep, PseHplus_Mass_Lep;
+  // Neutrino direction same as corresponding lepton
+  float PseWp_Mass_Lep, PseWm_Mass_Lep, PseTop_Mass_Lep, PseTbar_Mass_Lep,
+      PseHplus_Mass_Lep;
 
   const int toMatch = 3;
   int UsedForTrain;
@@ -980,15 +1059,20 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mSigTree->Branch("PseWp_Mass_NoNu", &PseWp_Mass_NoNu, "PseWp_Mass_NoNu/F");
   mSigTree->Branch("PseWm_Mass_NoNu", &PseWm_Mass_NoNu, "PseWm_Mass_NoNu/F");
   mSigTree->Branch("PseTop_Mass_NoNu", &PseTop_Mass_NoNu, "PseTop_Mass_NoNu/F");
-  mSigTree->Branch("PseTbar_Mass_NoNu", &PseTbar_Mass_NoNu, "PseTbar_Mass_NoNu/F");
-  mSigTree->Branch("PseHplus_Mass_NoNu", &PseHplus_Mass_NoNu, "PseHplus_Mass_NoNu/F");
-  mSigTree->Branch("Pse_dR_ttbar_NoNu", &Pse_dR_ttbar_NoNu, "Pse_dR_ttbar_NoNu/F");
-  mSigTree->Branch("Pse_dR_Hp_tbar_NoNu", &Pse_dR_Hp_tbar_NoNu, "Pse_dR_Hp_tbar_NoNu/F");
+  mSigTree->Branch("PseTbar_Mass_NoNu", &PseTbar_Mass_NoNu,
+                   "PseTbar_Mass_NoNu/F");
+  mSigTree->Branch("PseHplus_Mass_NoNu", &PseHplus_Mass_NoNu,
+                   "PseHplus_Mass_NoNu/F");
+  mSigTree->Branch("Pse_dR_ttbar_NoNu", &Pse_dR_ttbar_NoNu,
+                   "Pse_dR_ttbar_NoNu/F");
+  mSigTree->Branch("Pse_dR_Hp_tbar_NoNu", &Pse_dR_Hp_tbar_NoNu,
+                   "Pse_dR_Hp_tbar_NoNu/F");
   mSigTree->Branch("PseWp_Mass_Lep", &PseWp_Mass_Lep, "PseWp_Mass_Lep/F");
   mSigTree->Branch("PseWm_Mass_Lep", &PseWm_Mass_Lep, "PseWm_Mass_Lep/F");
   mSigTree->Branch("PseTop_Mass_Lep", &PseTop_Mass_Lep, "PseTop_Mass_Lep/F");
   mSigTree->Branch("PseTbar_Mass_Lep", &PseTbar_Mass_Lep, "PseTbar_Mass_Lep/F");
-  mSigTree->Branch("PseHplus_Mass_Lep", &PseHplus_Mass_Lep, "PseHplus_Mass_Lep/F");
+  mSigTree->Branch("PseHplus_Mass_Lep", &PseHplus_Mass_Lep,
+                   "PseHplus_Mass_Lep/F");
 
   mBkgTree->Branch("PseWp_Mass", &PseWp_Mass, "PseWp_Mass/F");
   mBkgTree->Branch("PseWm_Mass", &PseWm_Mass, "PseWm_Mass/F");
@@ -1006,15 +1090,20 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mBkgTree->Branch("PseWp_Mass_NoNu", &PseWp_Mass_NoNu, "PseWp_Mass_NoNu/F");
   mBkgTree->Branch("PseWm_Mass_NoNu", &PseWm_Mass_NoNu, "PseWm_Mass_NoNu/F");
   mBkgTree->Branch("PseTop_Mass_NoNu", &PseTop_Mass_NoNu, "PseTop_Mass_NoNu/F");
-  mBkgTree->Branch("PseTbar_Mass_NoNu", &PseTbar_Mass_NoNu, "PseTbar_Mass_NoNu/F");
-  mBkgTree->Branch("PseHplus_Mass_NoNu", &PseHplus_Mass_NoNu, "PseHplus_Mass_NoNu/F");
-  mBkgTree->Branch("Pse_dR_ttbar_NoNu", &Pse_dR_ttbar_NoNu, "Pse_dR_ttbar_NoNu/F");
-  mBkgTree->Branch("Pse_dR_Hp_tbar_NoNu", &Pse_dR_Hp_tbar_NoNu, "Pse_dR_Hp_tbar_NoNu/F");
+  mBkgTree->Branch("PseTbar_Mass_NoNu", &PseTbar_Mass_NoNu,
+                   "PseTbar_Mass_NoNu/F");
+  mBkgTree->Branch("PseHplus_Mass_NoNu", &PseHplus_Mass_NoNu,
+                   "PseHplus_Mass_NoNu/F");
+  mBkgTree->Branch("Pse_dR_ttbar_NoNu", &Pse_dR_ttbar_NoNu,
+                   "Pse_dR_ttbar_NoNu/F");
+  mBkgTree->Branch("Pse_dR_Hp_tbar_NoNu", &Pse_dR_Hp_tbar_NoNu,
+                   "Pse_dR_Hp_tbar_NoNu/F");
   mBkgTree->Branch("PseWp_Mass_Lep", &PseWp_Mass_Lep, "PseWp_Mass_Lep/F");
   mBkgTree->Branch("PseWm_Mass_Lep", &PseWm_Mass_Lep, "PseWm_Mass_Lep/F");
   mBkgTree->Branch("PseTop_Mass_Lep", &PseTop_Mass_Lep, "PseTop_Mass_Lep/F");
   mBkgTree->Branch("PseTbar_Mass_Lep", &PseTbar_Mass_Lep, "PseTbar_Mass_Lep/F");
-  mBkgTree->Branch("PseHplus_Mass_Lep", &PseHplus_Mass_Lep, "PseHplus_Mass_Lep/F");
+  mBkgTree->Branch("PseHplus_Mass_Lep", &PseHplus_Mass_Lep,
+                   "PseHplus_Mass_Lep/F");
 
   // main loop
   long nentries = fTree->GetEntries();
@@ -1029,8 +1118,9 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     // define some variables
     int nJets = GetTreeValue<int>(fTree, "nJets");
     int nBTags = GetTreeValue<int>(fTree, "nBTags");
-    //if(!(nJets > 3 && nBTags >= 3)) continue; //AnaRegion = SR (Tight Def)
-    if (!(nJets >= 3 && nBTags > 0)) continue; //AnaRegion = Loose Def
+    // if(!(nJets > 3 && nBTags >= 3)) continue; //AnaRegion = SR (Tight Def)
+    if (!(nJets >= 3 && nBTags > 0))
+      continue; // AnaRegion = Loose Def
 
     TLorentzVector *LpVect = new TLorentzVector();
     TLorentzVector *LmVect = new TLorentzVector();
@@ -1098,9 +1188,15 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
       PseTbar_Mass_Lep = mVariables.at("PseTbar_Mass_Lep");
       PseHplus_Mass_Lep = mVariables.at("PseHplus_Mass_Lep");
 
-      UsedForTrain = (rnd->Uniform(1) < 0.66)?1:0;
+      UsedForTrain = (rnd->Uniform(1) < 0.66) ? 1 : 0;
       if (UsedForTrain)
-      UsedForTrain = (rnd->Uniform(1) < 0.5)?1:-1;
+        UsedForTrain = (rnd->Uniform(1) < 0.5) ? 1 : -1;
+
+      if (UsedForTrain < 0)
+      {
+        mAppTree->Fill();
+        continue;
+      }
 
       if (hasCorrectMatch)
         mBkgTree->Fill();
