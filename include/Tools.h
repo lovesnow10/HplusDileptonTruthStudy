@@ -55,6 +55,6 @@ float GetMaxBDTScore(TTree *mEvent, TMVA::Reader *mReader,
 int CheckJetsMatchingEff(TTree *fTree, std::string outName);
 int CheckJetsWiLepMatchingEff(TTree *fTree, std::string outName);
 int PrepareBDTTrees(TTree *fTree, std::string outName);
-int ApplyRecoBDT() { return 0;};
+int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName, TFile *outFile);
 
 #endif /* ifndef __TOOLS_H */

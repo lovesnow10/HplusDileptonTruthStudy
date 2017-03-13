@@ -20,7 +20,10 @@ int main(int argc, char const *argv[]) {
   // open file and get trees
   TFile *inFile = OpenFile(argv[1]);
   TFile *outFile = CreateNewFile(argv[4]);
-  TTree *mTree = GetTTree("nominal_Loose", inFile);
+  TString WeightFile(argv[2]);
+  TString SampleName(argv[3]);
+  ApplyRecoBDT(inFile, WeightFile, SampleName, outFile);
+/*  TTree *mTree = GetTTree("nominal_Loose", inFile);
 
   // setup TMVA reader
   std::vector<TString> variables;
@@ -119,9 +122,8 @@ int main(int argc, char const *argv[]) {
     }
     hist_out->Fill(mMaxBDTScore);
   }
-
+*/
   inFile->Close();
-  hist_out->Write();
   outFile->Close();
   return 0;
 }
