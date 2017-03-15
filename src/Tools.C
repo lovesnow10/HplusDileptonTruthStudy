@@ -1,7 +1,7 @@
+#include "TMVA/Reader.h"
 #include "TRandom3.h"
 #include "Tools.h"
 #include <TMath.h>
-#include "TMVA/Reader.h"
 
 int GetLeptonPlusTruth(TTree *mEvent, TLorentzVector *LpVect) {
   std::vector<int> pdgid =
@@ -583,7 +583,7 @@ GetAllBDTScore(TTree *mEvent, TMVA::Reader *mReader,
     std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
     // mVarialbes.clear();
     for (auto _var : mVariables) {
-        mVariables.at(_var.first) = tmpVariables.at(_var.first.Data());
+      mVariables.at(_var.first) = tmpVariables.at(_var.first.Data());
     }
     mBDTScoresMap[mPerm] = mReader->EvaluateMVA(MethodName);
   }
@@ -599,7 +599,7 @@ GetMaxBDTScore(const std::map<std::vector<int>, float> &mScoreMap,
     if (mScore.second > mMaxScore) {
       mMaxScore = mScore.second;
       mPerm = mScore.first;
-//      std::cout<<"in Max:"<<mMaxScore<<std::endl;
+      //      std::cout<<"in Max:"<<mMaxScore<<std::endl;
     }
   }
   return mPerm;
@@ -1109,7 +1109,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   long nentries = fTree->GetEntries();
   for (long i = 0; i < nentries; i++) {
     if (i % 500 == 0)
-      std::cout << "Processing " << i << std::endl;
+      std::cout << "Processing " << i << "/" << nentries << std::endl;
     fTree->GetEntry(i);
 
     if (TauVeto(fTree) || FakeLeptonRemoval(fTree))
@@ -1121,6 +1121,12 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     // if(!(nJets > 3 && nBTags >= 3)) continue; //AnaRegion = SR (Tight Def)
     if (!(nJets >= 3 && nBTags > 0))
       continue; // AnaRegion = Loose Def
+
+    std::map<std::string, bool> mMatchingResults;
+    mMatchingResults = JetMatching(fTree);
+    if (!(mMatchingResults["B1"] && mMatchingResults["B2"] &&
+          mMatchingResults["B3"]))
+      continue;
 
     int UsedForApply = (rnd->Uniform(0, 1) < 0.333) ? 1 : 0;
     if (UsedForApply) {
@@ -1219,8 +1225,8 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   return 1;
 }
 
-int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName, TFile *outFile)
-{
+int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
+                 TFile *outFile) {
   TTree *mTree = GetTTree("nominal_Loose", inFile);
   std::vector<TString> variables;
 
@@ -1233,32 +1239,33 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName, TFile 
 
   TMVA::Reader *mReader = new TMVA::Reader("!Color:!Silent");
 
-  for (auto _var : variables)
-  {
+  for (auto _var : variables) {
     mReader->AddVariable(_var, &mVariables[_var]);
   }
   mReader->BookMVA(MethodName, WeightFile);
 
   TString histname = MethodName + "_" + SampleName;
   TH1F *hist_out = new TH1F(histname, histname, 20, -1, 1);
-  TH1F *hist_eff = new TH1F(histname+"_eff", histname+"_eff", 2, 0, 1);
+  TH1F *hist_eff = new TH1F(histname + "_eff", histname + "_eff", 2, 0, 1);
 
   long nentries = mTree->GetEntries();
 
-  for (long i = 0; i < nentries; ++i)
-  {
-    if (i%500 == 0) std::cout<<"Processing "<<i <<"\/"<< nentries <<std::endl;
+  for (long i = 0; i < nentries; ++i) {
+    if (i % 500 == 0)
+      std::cout << "Processing " << i << "/" << nentries << std::endl;
     mTree->GetEntry(i);
 
     if (TauVeto(mTree) || FakeLeptonRemoval(mTree))
-    continue;
+      continue;
 
     int nJets = GetTreeValue<int>(mTree, "nJets");
     int nBTags = GetTreeValue<int>(mTree, "nBTags");
 
-    if (!(nJets >= 3 && nBTags > 0)) continue;
+    if (!(nJets >= 3 && nBTags > 0))
+      continue;
 
-    std::map<std::vector<int>, float> mBDTScoresMap = GetAllBDTScore(mTree, mReader, mVariables, "RecoBDT_Dilepton", toMatch);
+    std::map<std::vector<int>, float> mBDTScoresMap =
+        GetAllBDTScore(mTree, mReader, mVariables, "RecoBDT_Dilepton", toMatch);
     float mMaxScore;
     std::vector<int> mPerm = GetMaxBDTScore(mBDTScoresMap, mMaxScore);
     int correct = CheckCorrectMatch(mTree, mPerm, toMatch);
