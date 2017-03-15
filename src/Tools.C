@@ -583,7 +583,7 @@ GetAllBDTScore(TTree *mEvent, TMVA::Reader *mReader,
     std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
     // mVarialbes.clear();
     for (auto _var : mVariables) {
-      _var.second = tmpVariables.at(_var.first.Data());
+        mVariables.at(_var.first) = tmpVariables.at(_var.first.Data());
     }
     mBDTScoresMap[mPerm] = mReader->EvaluateMVA(MethodName);
   }
@@ -599,6 +599,7 @@ GetMaxBDTScore(const std::map<std::vector<int>, float> &mScoreMap,
     if (mScore.second > mMaxScore) {
       mMaxScore = mScore.second;
       mPerm = mScore.first;
+//      std::cout<<"in Max:"<<mMaxScore<<std::endl;
     }
   }
   return mPerm;
@@ -1246,7 +1247,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName, TFile 
 
   for (long i = 0; i < nentries; ++i)
   {
-    if (i%500 == 0) std::cout<<"Processing "<<i<<std::endl;
+    if (i%500 == 0) std::cout<<"Processing "<<i <<"\/"<< nentries <<std::endl;
     mTree->GetEntry(i);
 
     if (TauVeto(mTree) || FakeLeptonRemoval(mTree))
