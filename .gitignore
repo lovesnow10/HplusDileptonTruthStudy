@@ -1,3 +1,6 @@
 CheckEff
 *.o
 *.root
+bin
+build
+lib
