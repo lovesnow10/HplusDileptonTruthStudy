@@ -1301,7 +1301,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
       std::vector<int> mPerm = mPermutations.at(iPerm);
 
       int correct = CheckCorrectMatch(mTree, mPerm);
-      if (correct) iCorrectMatch = iPerm;
+      if (correct == 1) iCorrectMatch = iPerm;
 
       B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
                            jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
@@ -1319,7 +1319,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
 
       std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
       for (auto _var : mVariables) {
-        _var.second = tmpVariables.at(_var.first.Data());
+        mVariables.at(_var.first) = tmpVariables.at(_var.first.Data());
       }
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
       mScoresVec.push_back(tmpBDTscore);
