@@ -1327,7 +1327,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     if (iCorrectMatch == -1) std::cout << "Correct Match NOT Found!" << '\n';
     auto ite_score = mScoresVec.begin();
     nMaxScore = distance(ite_score, max_element(ite_score, ite_score+nPerms));
-    if (iCorrectMatch == nMaxScore) std::cout<<"Max is Correct!"<<std::endl;
+    if (iCorrectMatch == nMaxScore) std::cout<<"Max is Correct! "<< iCorrectMatch<<std::endl;
   }
   hist_out->Write(0, TObject::kOverwrite);
   hist_eff->Write(0, TObject::kOverwrite);
