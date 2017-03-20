@@ -1258,19 +1258,76 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     if (TauVeto(mTree) || FakeLeptonRemoval(mTree))
       continue;
 
+    TLorentzVector *LpVect = new TLorentzVector();
+    TLorentzVector *LmVect = new TLorentzVector();
+    TLorentzVector *MetVect = new TLorentzVector();
+    TLorentzVector *B1Vect = new TLorentzVector();
+    TLorentzVector *B2Vect = new TLorentzVector();
+    TLorentzVector *B3Vect = new TLorentzVector();
+
+    GetLeptonPlusDetector(mTree, LpVect);
+    GetLeptonMinusDetector(mTree, LmVect);
+    GetMetVector(mTree, MetVect);
+
+    std::vector<float> jet_pt =
+        GetTreeValue<std::vector<float>>(mTree, "jet_pt");
+    std::vector<float> jet_eta =
+        GetTreeValue<std::vector<float>>(mTree, "jet_eta");
+    std::vector<float> jet_phi =
+        GetTreeValue<std::vector<float>>(mTree, "jet_phi");
+    std::vector<float> jet_e = GetTreeValue<std::vector<float>>(mTree, "jet_e");
+
     int nJets = GetTreeValue<int>(mTree, "nJets");
     int nBTags = GetTreeValue<int>(mTree, "nBTags");
 
     if (!(nJets >= 3 && nBTags > 0))
       continue;
 
-    std::map<std::vector<int>, float> mBDTScoresMap =
+/*    std::map<std::vector<int>, float> mBDTScoresMap =
         GetAllBDTScore(mTree, mReader, mVariables, "RecoBDT_Dilepton", toMatch);
     float mMaxScore;
     std::vector<int> mPerm = GetMaxBDTScore(mBDTScoresMap, mMaxScore);
     int correct = CheckCorrectMatch(mTree, mPerm, toMatch);
     hist_out->Fill(mMaxScore);
     hist_eff->Fill(correct);
+*/
+    std::vector<std::vector<int>> mPermutations = GetPermutations(nJets, toMatch);
+    int nPerms = mPermutations.size();
+    std::vector<float> mScoresVec;
+    int iCorrectMatch = -1;
+    int nMaxScore = -2;
+    for (int iPerm = 0; iPerm < nPerms;++iPerm)
+    {
+      std::vector<int> mPerm = mPermutations.at(iPerm);
+
+      int correct = CheckCorrectMatch(mTree, mPerm);
+      if (correct) iCorrectMatch = iPerm;
+
+      B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
+                           jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
+      B2Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(1)), jet_eta.at(mPerm.at(1)),
+                           jet_phi.at(mPerm.at(1)), jet_e.at(mPerm.at(1)));
+      B3Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(2)), jet_eta.at(mPerm.at(2)),
+                           jet_phi.at(mPerm.at(2)), jet_e.at(mPerm.at(2)));
+      DilepEvent *event = new DilepEvent();
+      event->SetVector(ObjType::B1, B1Vect);
+      event->SetVector(ObjType::B2, B2Vect);
+      event->SetVector(ObjType::B3, B3Vect);
+      event->SetVector(ObjType::Lp, LpVect);
+      event->SetVector(ObjType::Lm, LmVect);
+      event->SetVector(ObjType::MET, MetVect);
+
+      std::map<std::string, float> tmpVariables = GetBDTInputVars(event);
+      for (auto _var : mVariables) {
+        _var.second = tmpVariables.at(_var.first.Data());
+      }
+      float tmpBDTscore = mReader->EvaluateMVA(MethodName);
+      mScoresVec.push_back(tmpBDTscore);
+    }
+    if (iCorrectMatch == -1) std::cout << "Correct Match NOT Found!" << '\n';
+    auto ite_score = mScoresVec.begin();
+    nMaxScore = distance(ite_score, max_element(ite_score, ite_score+nPerms));
+    if (iCorrectMatch == nMaxScore) std::cout<<"Max is Correct!"<<std::endl;
   }
   hist_out->Write(0, TObject::kOverwrite);
   hist_eff->Write(0, TObject::kOverwrite);
