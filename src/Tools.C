@@ -1342,8 +1342,10 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     hist_out->Fill(*max_element(ite_score, ite_score+nPerms));
     if (iCorrectMatch == iMaxScore) hist_eff->Fill(1);
     else hist_eff->Fill(0);
+    outTree->Fill();
   }
   hist_out->Write(0, TObject::kOverwrite);
   hist_eff->Write(0, TObject::kOverwrite);
+  outTree->Write(0, TObject::kOverwrite);
   return 1;
 }
