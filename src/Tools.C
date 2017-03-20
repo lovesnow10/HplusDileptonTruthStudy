@@ -1248,6 +1248,18 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
   TH1F *hist_out = new TH1F(histname, histname, 20, -1, 1);
   TH1F *hist_eff = new TH1F(histname + "_eff", histname + "_eff", 2, 0, 1);
 
+  TTree *outTree = new TTree("outTree", "RecoBDTapply");
+
+  std::vector<float> *mScoresVec = new std::vector<float>;
+  int iCorrectMatch;
+  int iMaxScore;
+  long iEntry;
+
+  outTree->Branch("CorrectMatchIndex", &iCorrectMatch, "iCorrectMatch/I");
+  outTree->Branch("MaxScoreIndex", &iMaxScore, "iMaxScore/I");
+  outTree->Branch("EntryIndex", &iEntry, "iEntry/L");
+  outTree->Branch("RecoBDTScore", mScoresVec);
+
   long nentries = mTree->GetEntries();
 
   for (long i = 0; i < nentries; ++i) {
@@ -1293,9 +1305,9 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
 */
     std::vector<std::vector<int>> mPermutations = GetPermutations(nJets, toMatch);
     int nPerms = mPermutations.size();
-    std::vector<float> mScoresVec;
-    int iCorrectMatch = -1;
-    int nMaxScore = -2;
+    mScoresVec->clear();
+    iCorrectMatch = -1;
+    iMaxScore = -2;
     for (int iPerm = 0; iPerm < nPerms;++iPerm)
     {
       std::vector<int> mPerm = mPermutations.at(iPerm);
@@ -1322,12 +1334,14 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
         mVariables.at(_var.first) = tmpVariables.at(_var.first.Data());
       }
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
-      mScoresVec.push_back(tmpBDTscore);
+      mScoresVec->push_back(tmpBDTscore);
     }
     if (iCorrectMatch == -1) std::cout << "Correct Match NOT Found!" << '\n';
-    auto ite_score = mScoresVec.begin();
-    nMaxScore = distance(ite_score, max_element(ite_score, ite_score+nPerms));
-    if (iCorrectMatch == nMaxScore) std::cout<<"Max is Correct! "<< iCorrectMatch<<std::endl;
+    auto ite_score = mScoresVec->begin();
+    iMaxScore = distance(ite_score, max_element(ite_score, ite_score+nPerms));
+    hist_out->Fill(*max_element(ite_score, ite_score+nPerms));
+    if (iCorrectMatch == iMaxScore) hist_eff->Fill(1);
+    else hist_eff->Fill(0);
   }
   hist_out->Write(0, TObject::kOverwrite);
   hist_eff->Write(0, TObject::kOverwrite);
