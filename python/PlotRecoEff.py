@@ -16,7 +16,7 @@ def OpenAllFiles(inFile):
         masspoint = line.strip().split(' ')[0]
         filepath  = line.strip().split(' ')[1]
         tmpRFile = rt.TFile.Open(filepath)
-        if not tmpm.IsZombie():
+        if not tmpRFile.IsZombie():
             mFileDict[masspoint] = tmpRFile
         else:
             print 'Cannot open %s' % (masspoint)
