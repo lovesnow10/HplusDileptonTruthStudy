@@ -40,7 +40,7 @@ def PlotRecoEff(inFiles, outName='effplot.eps'):
     hist_eff = rt.TH1F('hist_eff', 'ReconstructionEfficiency', nMassPoints, 0, nMassPoints)
     for iMassPoint, mp in enumerate(mMassPoint):
         hist_eff.SetBinContent(iMassPoint+1, mEffDict[mp])
-        hist_eff.GetXaxis().SetBinLabel(mp)
+        hist_eff.GetXaxis().SetBinLabel(iMassPoint+1, mp)
 
     canvas = rt.TCanvas('c1', 'c1', 800, 600)
     hist_eff.SetStats(0)
