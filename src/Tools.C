@@ -1246,7 +1246,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
 
   TString histname = MethodName + "_" + SampleName;
   TH1F *hist_out = new TH1F(histname, histname, 20, -1, 1);
-  TH1F *hist_eff = new TH1F(histname + "_eff", histname + "_eff", 2, 0, 1);
+  TH1F *hist_eff = new TH1F(histname + "_eff", histname + "_eff", 2, 0, 2);
 
   TTree *outTree = new TTree("outTree", "RecoBDTapply");
 
