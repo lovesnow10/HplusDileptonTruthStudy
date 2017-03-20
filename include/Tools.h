@@ -41,16 +41,6 @@ std::map<std::string, bool> LepMatching(TTree *mEvent);
 std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent);
 std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent);
 
-std::map<std::vector<int>, float>
-GetAllBDTScore(TTree *mEvent, TMVA::Reader *mReader,
-               std::map<TString, float> &mVariables, TString MethodName,
-               int toMatch = 3);
-std::vector<int> GetMaxBDTScore(const std::map<std::vector<int>, float> &mScoreMap,
-                   float &mMaxScore);
-float GetMaxBDTScore(TTree *mEvent, TMVA::Reader *mReader,
-                     std::map<TString, float> &mVariables, TString MethodName,
-                     int toMatch = 3);
-
 // main functions
 int CheckJetsMatchingEff(TTree *fTree, std::string outName);
 int CheckJetsWiLepMatchingEff(TTree *fTree, std::string outName);
