@@ -1103,7 +1103,6 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
 
 int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
                  TFile *outFile) {
-  gROOT->ProcessLine("#include <map>");
   TTree *mTree = GetTTree("nominal_Loose", inFile);
   std::vector<TString> variables;
 
@@ -1127,7 +1126,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
 
   TTree *outTree = new TTree("outTree", "RecoBDTapply");
 
-  std::map<int, float> *mScoresMap = new std::map<int, float>;
+  std::vector<float> mScoresVec;
   int iCorrectMatch;
   int iMaxScore;
   long iEntry;
@@ -1135,7 +1134,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
   outTree->Branch("CorrectMatchIndex", &iCorrectMatch, "iCorrectMatch/I");
   outTree->Branch("MaxScoreIndex", &iMaxScore, "iMaxScore/I");
   outTree->Branch("EntryIndex", &iEntry, "iEntry/L");
-  outTree->Branch("RecoBDTScore", mScoresMap);
+  outTree->Branch("RecoBDTScore", &mScoresVec);
 
   long nentries = mTree->GetEntries();
 
@@ -1175,7 +1174,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     std::vector<std::vector<int>> mPermutations =
         GetPermutations(nJets, toMatch);
     int nPerms = mPermutations.size();
-    mScoresMap->clear();
+    mScoresVec.clear();
     iCorrectMatch = -1;
     iMaxScore = -2;
     bool hasCorrectMatch = false;
@@ -1208,25 +1207,20 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
         mVariables.at(_var.first) = tmpVariables.at(_var.first.Data());
       }
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
-      mScoresMap->insert(std::make_pair(iPerm, tmpBDTscore));
+      mScoresVec.push_back(tmpBDTscore);
     }
     /*    auto ite_score = mScoresVec->begin();
         iMaxScore = distance(ite_score, max_element(ite_score,
        ite_score+nPerms));
-        hist_out->Fill(*max_element(ite_score, ite_score+nPerms));
-        iMaxScore = distance(mScoresVec->begin(),
-       max_element(mScoresVec->begin(), mScoresVec->end()));
-        hist_out->Fill(*max_element(mScoresVec->begin(), mScoresVec->end()));*/
-    float tmpMaxValue = -9999.0;
-    for (auto score : *mScoresMap) {
-      if (score.second > tmpMaxValue) {
-        tmpMaxValue = score.second;
-        iMaxScore = score.first;
-      }
-    }
-    if (iCorrectMatch == iMaxScore)
+        hist_out->Fill(*max_element(ite_score, ite_score+nPerms));*/
+    iMaxScore = distance(mScoresVec.begin(),
+                         max_element(mScoresVec.begin(), mScoresVec.end()));
+    hist_out->Fill(*max_element(mScoresVec.begin(), mScoresVec.end()));
+
+    if (iCorrectMatch == iMaxScore) {
       hist_eff->Fill(1);
-    else
+      iEntry = i;
+    } else
       hist_eff->Fill(0);
     outTree->Fill();
   }
