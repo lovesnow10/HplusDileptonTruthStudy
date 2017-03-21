@@ -4,6 +4,14 @@ import ROOT as rt
 import sys
 import os
 
+def NormlizeHist(hist):
+    if hist.GetSumw2N() == 0:
+        hist.Sumw2()
+    if hist.GetSumOfWeights() != 0:
+        dx = (hist.GetXaxis().GetXMax()-hist.GetXaxis().GetXmin())/hist.GetNbinsX()
+        hist.Scale(1.0/hist.GetSumOfWeights()/dx)
+    return hist
+
 def GetSeparation(hsig, hbkg):
     separation = 0.0
     # check hsig and hbkg have same binning
@@ -94,9 +102,11 @@ def main(mSigFilePath, mBkgFilePath):
     mSigHist.SetName(mMassPoint)
     mBkgHist.SetName('ttbar')
 
-    mSigHist.Scale(1.0 / mSigHist.GetSumOfWeights())
-    mBkgHist.Scale(1.0 / mBkgHist.GetSumOfWeights())
-
+    #mSigHist.Scale(1.0 / mSigHist.GetSumOfWeights())
+    #mBkgHist.Scale(1.0 / mBkgHist.GetSumOfWeights())
+    mSigHist = NormlizeHist(mSigHist)
+    mBkgHist = NormlizeHist(mBkgHist)
+    
     DrawPlots(mSigHist, mBkgHist)
 
 if __name__ == '__main__':
