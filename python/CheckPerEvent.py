@@ -31,7 +31,7 @@ def CheckTree(mTree):
 
 def main(inFilePath):
     inFile = rt.TFile.Open(inFilePath)
-    if not inFile.IsZombie():
+    if inFile.IsZombie():
         print 'Cannot open %s' % (inFilePath)
         sys.exit(-1)
 
