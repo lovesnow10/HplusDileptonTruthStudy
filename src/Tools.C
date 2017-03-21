@@ -1177,6 +1177,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     mScoresVec.clear();
     iCorrectMatch = -1;
     iMaxScore = -2;
+    iEntry = -1;
     bool hasCorrectMatch = false;
     for (int iPerm = 0; iPerm < nPerms; ++iPerm) {
       std::vector<int> mPerm = mPermutations.at(iPerm);
