@@ -1175,13 +1175,24 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     mScoresVec->clear();
     iCorrectMatch = -1;
     iMaxScore = -2;
+    bool hasCorrectMatch = false;
     for (int iPerm = 0; iPerm < nPerms;++iPerm)
     {
       std::vector<int> mPerm = mPermutations.at(iPerm);
 
+      if (hasCorrectMatch)
+      {
+        int correct = CheckCorrectMatch(mTree, mPerm);
+        if (correct == 1) std::cout<<"Find mutilple correct match"<<std::endl;
+      }
+      else{
       int correct = CheckCorrectMatch(mTree, mPerm);
-      if (correct == 1) iCorrectMatch = iPerm;
-
+      if (correct == 1)
+      {
+         iCorrectMatch = iPerm;
+         hasCorrectMatch = true;
+      }
+    }
       B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
                            jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
       B2Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(1)), jet_eta.at(mPerm.at(1)),
