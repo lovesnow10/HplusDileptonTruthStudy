@@ -1216,6 +1216,11 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
       if (i == 9042)
       {
         std::cout<<iPerm<<": "<<tmpBDTscore<<std::endl;
+        for (auto p : mPerm)
+        {
+          std::cout<<p<<" ";
+        }
+        std::cout<<std::endl;
         for (auto _var : mVariables)
         {
           std::cout<<"\t"<<_var.first.Data()<<": "<<_var.second<<std::endl;
