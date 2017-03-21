@@ -47,7 +47,7 @@ def main(inFilePath):
 
     eff = correctReco / wrongReco
 
-    tt = rt.TText(0.12, 0.8, 'Reconstruction Efficiency: {}'.format(eff))
+    tt = rt.TText(0.12, 0.8, 'Reconstruction Efficiency: %1.4f' % (eff))
     tt.SetNDC()
     tt.SetTextSize(0.032)
     tt.AppendPad()
