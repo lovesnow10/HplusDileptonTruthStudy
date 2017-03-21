@@ -8,7 +8,7 @@ def NormlizeHist(hist):
     if hist.GetSumw2N() == 0:
         hist.Sumw2()
     if hist.GetSumOfWeights() != 0:
-        dx = (hist.GetXaxis().GetXMax()-hist.GetXaxis().GetXmin())/hist.GetNbinsX()
+        dx = (hist.GetXaxis().GetXmax()-hist.GetXaxis().GetXmin())/hist.GetNbinsX()
         hist.Scale(1.0/hist.GetSumOfWeights()/dx)
     return hist
 
