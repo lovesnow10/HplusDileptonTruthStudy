@@ -45,13 +45,13 @@ def DrawPlots(mSigHist, mBkgHist):
     GhostHist.SetTitle('')
     yMaximun = max(mSigHist.GetMaximum(), mBkgHist.GetMaximum())
 
-    GhostHist.SetMaximum(yMaximun * 1.7)
+    GhostHist.SetMaximum(yMaximun * 1.5)
     GhostHist.SetMinimum(0.0)
 
     GhostHist.Draw()
 
     GhostHist.GetXaxis().SetTitle('Max RecoBDT Score')
-    GhostHist.GetYaxis().SetTitle('1 / Events')
+    GhostHist.GetYaxis().SetTitle('(1/N) dN^{ }/^{ }dx')
 
     # Set hist styles
     mSigHist.SetLineWidth(2)
@@ -106,7 +106,7 @@ def main(mSigFilePath, mBkgFilePath):
     #mBkgHist.Scale(1.0 / mBkgHist.GetSumOfWeights())
     mSigHist = NormlizeHist(mSigHist)
     mBkgHist = NormlizeHist(mBkgHist)
-    
+
     DrawPlots(mSigHist, mBkgHist)
 
 if __name__ == '__main__':
