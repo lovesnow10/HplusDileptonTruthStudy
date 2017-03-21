@@ -1127,6 +1127,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
   TTree *outTree = new TTree("outTree", "RecoBDTapply");
 
   std::vector<float> mScoresVec;
+  std::vector<float> mJetPt;
   int iCorrectMatch;
   int iMaxScore;
   long iEntry;
@@ -1135,6 +1136,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
   outTree->Branch("MaxScoreIndex", &iMaxScore, "iMaxScore/I");
   outTree->Branch("EntryIndex", &iEntry, "iEntry/L");
   outTree->Branch("RecoBDTScore", &mScoresVec);
+  outTree->Branch("jet_pt", &mJetPt);
 
   long nentries = mTree->GetEntries();
 
@@ -1164,6 +1166,8 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     std::vector<float> jet_phi =
         GetTreeValue<std::vector<float>>(mTree, "jet_phi");
     std::vector<float> jet_e = GetTreeValue<std::vector<float>>(mTree, "jet_e");
+
+    mJetPt = jet_pt;
 
     int nJets = GetTreeValue<int>(mTree, "nJets");
     int nBTags = GetTreeValue<int>(mTree, "nBTags");
