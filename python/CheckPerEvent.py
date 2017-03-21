@@ -41,4 +41,6 @@ def main(inFilePath):
 
     while CheckTree(mTree) == 'y':
         pass
-    
+
+if __name__ == '__main__':
+    main(sys.argv[1])
