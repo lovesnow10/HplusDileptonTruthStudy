@@ -27,7 +27,7 @@ def CheckTree(mTree):
     hsig.SetLineColor(2)
     hbkg.Draw('hist')
     hsig.Draw('hist same')
-    return raw_input('Y to continue, other to exit \n')
+    return raw_input('y to continue, other to exit \n')
 
 def main(inFilePath):
     inFile = rt.TFile.Open(inFilePath)
