@@ -30,6 +30,26 @@ def main(inFilePath):
 
     canvas = rt.TCanvas('c1', 'c1', 800, 600)
 
+    hist.SetStats(0)
+    hist.SetTitle('Correct Matched Score Ranking')
+    hist.GetYaxis().SetTitle('Events')
+    hist.GetXaxis().SetTitle('Rank')
+    hist.SetLineWidth(2)
+    hist.SetMinimum(0)
+    hist.SetMaximum(hist.GetMaximum()*1.4)
+
+    correctReco = hist[1]
+    wrongReco = 0.0
+    for i in xrange(2, 11):
+        wrongReco += hist[i]
+
+    eff = correctReco / wrongReco
+
+    tt = rt.TText(0.12, 0.8, 'Reconstruction Efficiency: {}'.format(eff))
+    tt.SetNDC()
+    tt.SetTextSize(0.032)
+    tt.AppendPad()
+
     hist.Draw('hist')
 
     raw_input('Press ENTER to quit')
