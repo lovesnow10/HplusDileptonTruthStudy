@@ -13,8 +13,8 @@ def CheckTree(mTree):
 
     correctScore = mScoreMap[iCorrect]
 
-    hsig = rt.TH1F('hsig', 'hsig', 20, -1, 1)
-    hbkg = rt.TH1F('hbkg', 'hbkg', 20, -1, 1)
+    hsig = rt.TH1F('hsig', 'hsig', 100, -1, 1)
+    hbkg = rt.TH1F('hbkg', 'hbkg', 100, -1, 1)
 
     hsig.Fill(correctScore)
     for score in mScoreMap:
@@ -27,7 +27,7 @@ def CheckTree(mTree):
     hsig.SetLineColor(2)
     hbkg.Draw('hist')
     hsig.Draw('hist same')
-    return raw_input('Y to continue, other to exit')
+    return raw_input('Y to continue, other to exit \n')
 
 def main(inFilePath):
     inFile = rt.TFile.Open(inFilePath)
