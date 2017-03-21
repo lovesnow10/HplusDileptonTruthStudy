@@ -2,6 +2,7 @@
 #include "TRandom3.h"
 #include "Tools.h"
 #include <TMath.h>
+#include <TROOT.h>
 
 int GetLeptonPlusTruth(TTree *mEvent, TLorentzVector *LpVect) {
   std::vector<int> pdgid =
@@ -1102,6 +1103,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
 
 int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
                  TFile *outFile) {
+  gROOT->ProcessLine("#include <map>");
   TTree *mTree = GetTTree("nominal_Loose", inFile);
   std::vector<TString> variables;
 
@@ -1170,25 +1172,23 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     if (!(nJets >= 3 && nBTags > 0))
       continue;
 
-    std::vector<std::vector<int>> mPermutations = GetPermutations(nJets, toMatch);
+    std::vector<std::vector<int>> mPermutations =
+        GetPermutations(nJets, toMatch);
     int nPerms = mPermutations.size();
     mScoresMap->clear();
     iCorrectMatch = -1;
     iMaxScore = -2;
     bool hasCorrectMatch = false;
-    for (int iPerm = 0; iPerm < nPerms;++iPerm)
-    {
+    for (int iPerm = 0; iPerm < nPerms; ++iPerm) {
       std::vector<int> mPerm = mPermutations.at(iPerm);
 
-
-      if (!hasCorrectMatch){
-      int correct = CheckCorrectMatch(mTree, mPerm);
-      if (correct == 1)
-      {
-         iCorrectMatch = iPerm;
-         hasCorrectMatch = true;
+      if (!hasCorrectMatch) {
+        int correct = CheckCorrectMatch(mTree, mPerm);
+        if (correct == 1) {
+          iCorrectMatch = iPerm;
+          hasCorrectMatch = true;
+        }
       }
-    }
       B1Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(0)), jet_eta.at(mPerm.at(0)),
                            jet_phi.at(mPerm.at(0)), jet_e.at(mPerm.at(0)));
       B2Vect->SetPtEtaPhiE(jet_pt.at(mPerm.at(1)), jet_eta.at(mPerm.at(1)),
@@ -1210,22 +1210,24 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
       mScoresMap->insert(std::make_pair(iPerm, tmpBDTscore));
     }
-/*    auto ite_score = mScoresVec->begin();
-    iMaxScore = distance(ite_score, max_element(ite_score, ite_score+nPerms));
-    hist_out->Fill(*max_element(ite_score, ite_score+nPerms));
-    iMaxScore = distance(mScoresVec->begin(), max_element(mScoresVec->begin(), mScoresVec->end()));
-    hist_out->Fill(*max_element(mScoresVec->begin(), mScoresVec->end()));*/
+    /*    auto ite_score = mScoresVec->begin();
+        iMaxScore = distance(ite_score, max_element(ite_score,
+       ite_score+nPerms));
+        hist_out->Fill(*max_element(ite_score, ite_score+nPerms));
+        iMaxScore = distance(mScoresVec->begin(),
+       max_element(mScoresVec->begin(), mScoresVec->end()));
+        hist_out->Fill(*max_element(mScoresVec->begin(), mScoresVec->end()));*/
     float tmpMaxValue = -9999.0;
-    for (auto score : *mScoresMap)
-    {
-      if (score.second>tmpMaxValue)
-      {
+    for (auto score : *mScoresMap) {
+      if (score.second > tmpMaxValue) {
         tmpMaxValue = score.second;
         iMaxScore = score.first;
       }
     }
-    if (iCorrectMatch == iMaxScore) hist_eff->Fill(1);
-    else hist_eff->Fill(0);
+    if (iCorrectMatch == iMaxScore)
+      hist_eff->Fill(1);
+    else
+      hist_eff->Fill(0);
     outTree->Fill();
   }
   hist_out->Write(0, TObject::kOverwrite);
