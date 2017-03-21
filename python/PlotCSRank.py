@@ -38,6 +38,8 @@ def main(inFilePath):
     hist.SetMinimum(0)
     hist.SetMaximum(hist.GetMaximum()*1.4)
 
+    hist.Draw('hist')
+
     correctReco = hist[1]
     wrongReco = 0.0
     for i in xrange(2, 11):
@@ -49,8 +51,6 @@ def main(inFilePath):
     tt.SetNDC()
     tt.SetTextSize(0.032)
     tt.AppendPad()
-
-    hist.Draw('hist')
 
     raw_input('Press ENTER to quit')
 
