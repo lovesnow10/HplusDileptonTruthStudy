@@ -1213,6 +1213,15 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
       }
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
       mScoresVec.push_back(tmpBDTscore);
+      if (i == 9042)
+      {
+        std::cout<<iPerm<<": "<<tmpBDTscore<<std::endl;
+        for (auto _var : mVariables)
+        {
+          std::cout<<"\t"<<_var.first.Data()<<": "<<_var.second<<std::endl;
+        }
+        std::cout<<"-----"<<std::endl;
+      }
     }
     /*    auto ite_score = mScoresVec->begin();
         iMaxScore = distance(ite_score, max_element(ite_score,
