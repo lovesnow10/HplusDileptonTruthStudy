@@ -5,13 +5,13 @@ import sys
 import os
 
 def GetSeparation(hsig, hbkg):
-    separation = 0
+    separation = 0.0
     # check hsig and hbkg have same binning
     if not hsig.GetNbinsX() == hbkg.GetNbinsX():
         print 'They do not have the same binniing'
         sys.exit(-1)
     nBins = hsig.GetNbinsX()
-    dx = (hsig.GetXaxis().GetXmax()-hsig.GetXaxis.GetXmin())/nBins
+    dx = (hsig.GetXaxis().GetXmax()-hsig.GetXaxis().GetXmin())/nBins
     nS = hsig.GetSumOfWeights()*dx
     nB = hbkg.GetSumOfWeights()*dx
     if nB > 0 and nS > 0:
@@ -62,7 +62,7 @@ def DrawPlots(mSigHist, mBkgHist):
     legend.Draw()
 
     separation = GetSeparation(mSigHist, mBkgHist)
-    text = 'Separation, %d' % (separation)
+    text = 'Separation, %1.4f' % (separation)
     Ttext = rt.TText(0.12, 0.8, text)
     Ttext.SetNDC()
     Ttext.SetTextSize(0.032)
