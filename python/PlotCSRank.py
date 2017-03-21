@@ -21,7 +21,7 @@ def main(inFilePath):
 
     mTree = inFile.Get('outTree')
 
-    hist = rt.TH1F('rank', 'rank', 10, 0, 10)
+    hist = rt.TH1F('rank', 'rank', 10, 1, 11)
 
     entries = mTree.GetEntries()
 
