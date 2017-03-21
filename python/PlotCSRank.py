@@ -45,7 +45,7 @@ def main(inFilePath):
     for i in xrange(2, 11):
         wrongReco += hist[i]
 
-    eff = correctReco / wrongReco
+    eff = correctReco / (wrongReco+correctReco)
 
     tt = rt.TText(0.12, 0.8, 'Reconstruction Efficiency: %1.4f' % (eff))
     tt.SetNDC()
