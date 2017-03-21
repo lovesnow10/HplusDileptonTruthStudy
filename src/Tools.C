@@ -1203,9 +1203,11 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
       mScoresVec->push_back(tmpBDTscore);
     }
-    auto ite_score = mScoresVec->begin();
+/*    auto ite_score = mScoresVec->begin();
     iMaxScore = distance(ite_score, max_element(ite_score, ite_score+nPerms));
-    hist_out->Fill(*max_element(ite_score, ite_score+nPerms));
+    hist_out->Fill(*max_element(ite_score, ite_score+nPerms));*/
+    iMaxScore = distance(mScoresVec->begin(), max_element(mScoresVec->begin(), mScoresVec->end()));
+    hist_out->Fill(*max_element(mScoresVec->begin(), mScoresVec->end()));
     if (iCorrectMatch == iMaxScore) hist_eff->Fill(1);
     else hist_eff->Fill(0);
     outTree->Fill();
