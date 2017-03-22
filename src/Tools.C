@@ -1128,6 +1128,9 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
 
   std::vector<float> mScoresVec;
   std::vector<float> mJetPt;
+  std::vector<float> mJetEta;
+  std::vector<float> mJetPhi;
+  std::vector<float> mJetE;
   int iCorrectMatch;
   int iMaxScore;
   long iEntry;
@@ -1137,6 +1140,9 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
   outTree->Branch("EntryIndex", &iEntry, "iEntry/L");
   outTree->Branch("RecoBDTScore", &mScoresVec);
   outTree->Branch("jet_pt", &mJetPt);
+  outTree->Branch("jet_eta", &mJetEta);
+  outTree->Branch("jet_phi", &mJetPhi);
+  outTree->Branch("jet_e", &mJetE);
 
   long nentries = mTree->GetEntries();
 
@@ -1168,6 +1174,9 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     std::vector<float> jet_e = GetTreeValue<std::vector<float>>(mTree, "jet_e");
 
     mJetPt = jet_pt;
+    mJetEta = jet_eta;
+    mJetPhi = jet_phi;
+    mJetE = jet_e;
 
     int nJets = GetTreeValue<int>(mTree, "nJets");
     int nBTags = GetTreeValue<int>(mTree, "nBTags");
@@ -1213,7 +1222,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
       }
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
       mScoresVec.push_back(tmpBDTscore);
-      if (i == 9048)
+/*      if (i == 9048)
       {
         std::cout<<iPerm<<": "<<tmpBDTscore<<std::endl;
         for (auto p : mPerm)
@@ -1226,7 +1235,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
           std::cout<<"\t"<<_var.first.Data()<<": "<<_var.second<<std::endl;
         }
         std::cout<<"-----"<<std::endl;
-      }
+      }*/
     }
     /*    auto ite_score = mScoresVec->begin();
         iMaxScore = distance(ite_score, max_element(ite_score,
