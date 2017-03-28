@@ -1207,7 +1207,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
       }
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
       mScoresVec.push_back(tmpBDTscore);
-      if (i == 7990)
+      if (i == 2689)
       {
         std::cout<<iPerm<<": "<<tmpBDTscore<<std::endl;
         for (auto p : mPerm)
