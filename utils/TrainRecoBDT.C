@@ -25,13 +25,13 @@ int main(int argc, char const *argv[]) {
 
   trainingOptions = ":NormMode=NumEvents";
   classifierOptions += ":!H";
-  classifierOptions += ":NTrees=800";
+  classifierOptions += ":NTrees=1000";
   classifierOptions += ":BoostType=Grad";
-  classifierOptions += ":Shrinkage=0.1";
+  classifierOptions += ":Shrinkage=0.3";
   classifierOptions += ":UseBaggedBoost";
-  classifierOptions += ":GradBaggingFraction=0.5";
-  classifierOptions += ":nCuts=30";
-  classifierOptions += ":MaxDepth=4";
+  classifierOptions += ":GradBaggingFraction=0.7";
+  classifierOptions += ":nCuts=40";
+  classifierOptions += ":MaxDepth=5";
 
   std::vector<TString> mVariables;
 
