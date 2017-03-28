@@ -49,7 +49,7 @@ def PlotRecoEff(inFiles, outName='effplot.eps'):
     hist_eff.SetMaximum(1.5)
 
     canvas.GetPad(0).SetGridy()
-    rt.gStyle.SetPaintTextFormat("1.4f m")
+    rt.gStyle.SetPaintTextFormat("1.4f")
     hist_eff.Draw('p TEXT0')
 
     hist_eff.GetXaxis().SetTitle('Sample')
