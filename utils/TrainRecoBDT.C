@@ -35,8 +35,8 @@ int main(int argc, char const *argv[]) {
 
   std::vector<TString> mVariables;
 
-  mVariables.push_back("PseTop_Mass");
-  mVariables.push_back("PseTbar_Mass");
+//  mVariables.push_back("PseTop_Mass");
+//  mVariables.push_back("PseTbar_Mass");
   mVariables.push_back("dR_B1_B2");
   mVariables.push_back("dR_B1_B3");
   mVariables.push_back("dR_B2_B3");
