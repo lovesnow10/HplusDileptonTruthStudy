@@ -34,30 +34,25 @@ int main(int argc, char const *argv[]) {
   classifierOptions += ":MaxDepth=3";
 
   std::vector<TString> mVariables;
-//  mVariables.push_back("PseWp_Mass");
-//  mVariables.push_back("PseWm_Mass");
-//  mVariables.push_back("PseTop_Mass");
-//  mVariables.push_back("PseTbar_Mass");
-//  mVariables.push_back("PseHplus_Mass");
-//  mVariables.push_back("dR_Lp_Lm");
+
+  mVariables.push_back("PseTop_Mass");
+  mVariables.push_back("PseTbar_Mass");
   mVariables.push_back("dR_B1_B2");
   mVariables.push_back("dR_B1_B3");
   mVariables.push_back("dR_B2_B3");
-//  mVariables.push_back("Pse_dR_Wp_Wm");
   mVariables.push_back("Pse_dR_ttbar");
-//  mVariables.push_back("Pse_dR_Hp_tbar");
-//  mVariables.push_back("PseWp_Mass_NoNu");
-//  mVariables.push_back("PseWm_Mass_NoNu");
-//  mVariables.push_back("PseTop_Mass_NoNu");
+  mVariables.push_back("PseTop_Mass_NoNu");
   mVariables.push_back("PseTbar_Mass_NoNu");
-  mVariables.push_back("PseHplus_Mass_NoNu");
-//  mVariables.push_back("Pse_dR_ttbar_NoNu");
-  mVariables.push_back("Pse_dR_Hp_tbar_NoNu");
-//  mVariables.push_back("PseWp_Mass_Lep");
-//  mVariables.push_back("PseWm_Mass_Lep");
-//  mVariables.push_back("PseTop_Mass_Lep");
+  mVariables.push_back("Pse_dR_ttbar_NoNu");
+  mVariables.push_back("PseTop_Mass_Lep");
   mVariables.push_back("PseTbar_Mass_Lep");
-  mVariables.push_back("PseHplus_Mass_Lep");
+  mVariables.push_back("pT_B1");
+  mVariables.push_back("pT_B2");
+  mVariables.push_back("pT_B3");
+  mVariables.push_back("mv2c10_B1");
+  mVariables.push_back("mv2c10_B2");
+  mVariables.push_back("mv2c10_B3");
+
 
   TCut cutSigTrain = "UsedForTrain == 1";
   TCut cutSigTest = "UsedForTrain == 0";

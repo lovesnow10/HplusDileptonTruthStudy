@@ -7,6 +7,7 @@
 
 DilepEvent::DilepEvent() {
   m_ObjMap.clear();
+  m_mv2c10.clear();
   m_b0Momentum = nullptr;
   m_b1Momentum = nullptr;
   m_b2Momentum = nullptr;
@@ -23,4 +24,15 @@ int DilepEvent::SetVector(ObjType type, TLorentzVector *vect) {
 
 TLorentzVector *DilepEvent::GetVector(ObjType type) {
   return m_ObjMap.find(type) != m_ObjMap.end() ? m_ObjMap.at(type) : nullptr;
+}
+
+int DilepEvent::SetBTagging(ObjType type, float mv2c10)
+{
+  m_mv2c10[type] = mv2c10;
+  return 0;
+}
+
+float DilepEvent::GetBTagging(ObjType type)
+{
+  return m_mv2c10.find(type) != m_mv2c10.end() ? m_mv2c10.at(type) : -10;
 }
