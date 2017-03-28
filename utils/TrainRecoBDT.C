@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]) {
   classifierOptions += ":Shrinkage=0.3";
   classifierOptions += ":UseBaggedBoost";
   classifierOptions += ":GradBaggingFraction=0.7";
-  classifierOptions += ":nCuts=40";
+  classifierOptions += ":nCuts=25";
   classifierOptions += ":MaxDepth=5";
 
   std::vector<TString> mVariables;
