@@ -1009,6 +1009,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     std::vector<float> jet_phi =
         GetTreeValue<std::vector<float>>(fTree, "jet_phi");
     std::vector<float> jet_e = GetTreeValue<std::vector<float>>(fTree, "jet_e");
+    std::vector<float> jet_mv2c10 = GetTreeValue<std::vector<float>>(fTree,"jet_mv2c10");
 
     // Get Jets permutation and loop them
     int hasCorrectMatch = 0;
@@ -1030,6 +1031,10 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
       event->SetVector(ObjType::Lp, LpVect);
       event->SetVector(ObjType::Lm, LmVect);
       event->SetVector(ObjType::MET, MetVect);
+
+      event->SetBTagging(ObjType::B1, jet_mv2c10.at(mPerm.at(0)));
+      event->SetBTagging(ObjType::B2, jet_mv2c10.at(mPerm.at(1)));
+      event->SetBTagging(ObjType::B3, jet_mv2c10.at(mPerm.at(2)));
 
       std::map<std::string, float> mVariables = GetBDTInputVars(event);
 
