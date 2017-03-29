@@ -42,7 +42,7 @@ def main(inFilePath):
 
     correctReco = hist[1]
     wrongReco = 0.0
-    for i in xrange(2, 11):
+    for i in xrange(2, 12):
         wrongReco += hist[i]
 
     eff = correctReco / (wrongReco+correctReco)
