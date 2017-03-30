@@ -86,7 +86,7 @@ $ make
 
 Additionally I extremely suggest to add *bin* and *python* to your `$PATH` for simplicity.
 
-Usage(take 200GeV for example):
+### Usage(take 200GeV for example):
 
 ```
 $ cd RecoBDT
