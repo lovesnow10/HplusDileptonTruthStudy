@@ -15,7 +15,9 @@ int main(int argc, char const *argv[]) {
   TFile *inFile = OpenFile(argv[1]);
   TFile *outFile = CreateNewFile(argv[2]);
 
-  std::string _no_btag(argv[3]);
+  std::string _no_btag;
+  if (argc > 3) _no_btag = std::string(argv[3]);
+  else _no_btag = "NO";
   bool noBtag = (_no_btag == "NOBTAG") ? true : false;
 
   TTree *mSigTree = GetTTree("signal", inFile);
