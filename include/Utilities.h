@@ -12,10 +12,10 @@
 #include <TTree.h>
 #include <algorithm>
 #include <ctime>
-#include <iostream>
-#include <string>
 #include <fstream>
+#include <iostream>
 #include <sstream>
+#include <string>
 
 TFile *OpenFile(const char *FileName);
 TFile *CreateNewFile(const char *FileName);
@@ -39,6 +39,6 @@ std::vector<std::vector<int>> GetCombinations(int n, int r);
 std::vector<std::vector<int>> GetPermutations(int n, int r);
 
 // Read variables from TMVA xml file
-void grabVariableList(TString WeightFile, std::vector<TString>& mVarialbes);
+void grabVariableList(TString WeightFile, std::vector<TString> &mVarialbes);
 
 #endif // __UTILITIES_H

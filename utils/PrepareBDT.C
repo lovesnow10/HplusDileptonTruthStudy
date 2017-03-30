@@ -11,7 +11,7 @@ int main(int argc, char const *argv[]) {
 
   TFile *inFile = OpenFile(argv[1]);
   TTree *nominal = GetTTree("nominal_Loose", inFile);
-  std::cout<<"Start running...PrepareBDTTrees"<<std::endl;
+  std::cout << "Start running...PrepareBDTTrees" << std::endl;
   PrepareBDTTrees(nominal, outName);
   return 0;
 }

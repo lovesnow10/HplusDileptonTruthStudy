@@ -4,13 +4,16 @@ import ROOT as rt
 import sys
 import os
 
+
 def NormlizeHist(hist):
     if hist.GetSumw2N() == 0:
         hist.Sumw2()
     if hist.GetSumOfWeights() != 0:
-        dx = (hist.GetXaxis().GetXmax()-hist.GetXaxis().GetXmin())/hist.GetNbinsX()
-        hist.Scale(1.0/hist.GetSumOfWeights()/dx)
+        dx = (hist.GetXaxis().GetXmax() -
+              hist.GetXaxis().GetXmin()) / hist.GetNbinsX()
+        hist.Scale(1.0 / hist.GetSumOfWeights() / dx)
     return hist
+
 
 def GetSeparation(hsig, hbkg):
     separation = 0.0
@@ -19,17 +22,18 @@ def GetSeparation(hsig, hbkg):
         print 'They do not have the same binniing'
         sys.exit(-1)
     nBins = hsig.GetNbinsX()
-    dx = (hsig.GetXaxis().GetXmax()-hsig.GetXaxis().GetXmin())/nBins
-    nS = hsig.GetSumOfWeights()*dx
-    nB = hbkg.GetSumOfWeights()*dx
+    dx = (hsig.GetXaxis().GetXmax() - hsig.GetXaxis().GetXmin()) / nBins
+    nS = hsig.GetSumOfWeights() * dx
+    nB = hbkg.GetSumOfWeights() * dx
     if nB > 0 and nS > 0:
-        for iBin in xrange(1, nBins+1):
-            s = hsig.GetBinContent(iBin)/nS
-            b = hbkg.GetBinContent(iBin)/nB
-            if s+b>0:
-                separation += 0.5*(s-b)*(s-b)/(s+b)
+        for iBin in xrange(1, nBins + 1):
+            s = hsig.GetBinContent(iBin) / nS
+            b = hbkg.GetBinContent(iBin) / nB
+            if s + b > 0:
+                separation += 0.5 * (s - b) * (s - b) / (s + b)
         separation *= dx
     return separation
+
 
 def GetBDTScoreHist(mFile, mHistName):
     return mFile.Get(mHistName)
@@ -95,7 +99,8 @@ def main(mSigFilePath, mBkgFilePath):
     mMassPoint = mSigFilePath.split('.')[-2]
     mMassPoint = mMassPoint.split('/')[-1]
 
-    mSigHist = GetBDTScoreHist(mSigFile, 'RecoBDT_Dilepton_' + mMassPoint + '_' + mMassPoint)
+    mSigHist = GetBDTScoreHist(
+        mSigFile, 'RecoBDT_Dilepton_' + mMassPoint + '_' + mMassPoint)
     mBkgHist = GetBDTScoreHist(
         mBkgFile, 'RecoBDT_Dilepton_' + mMassPoint + '_ttbarPP8')
 

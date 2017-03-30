@@ -28,7 +28,7 @@ private:
   TLorentzVector *m_metMomentum;
   // map to hold all objects
   std::map<ObjType, TLorentzVector *> m_ObjMap;
-  std::map<ObjType, float>m_mv2c10;
+  std::map<ObjType, float> m_mv2c10;
 
 public:
   DilepEvent();

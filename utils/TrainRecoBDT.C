@@ -1,24 +1,27 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "TFile.h"
-#include "TTree.h"
 #include "TMVA/Factory.h"
 #include "TString.h"
+#include "TTree.h"
 
-#include "Utilities.h"
 #include "Tools.h"
+#include "Utilities.h"
 
 int main(int argc, char const *argv[]) {
-  //open files and get trees
+  // open files and get trees
   TFile *inFile = OpenFile(argv[1]);
   TFile *outFile = CreateNewFile(argv[2]);
+
+  std::string _no_btag(argv[3]);
+  bool noBtag = (_no_btag == "NOBTAG") ? true : false;
 
   TTree *mSigTree = GetTTree("signal", inFile);
   TTree *mBkgTree = GetTTree("background", inFile);
 
-  //definde options
+  // definde options
   TString classifierName = "RecoBDT_Dilepton";
   TString trainingOptions;
   TString classifierOptions;
@@ -35,8 +38,8 @@ int main(int argc, char const *argv[]) {
 
   std::vector<TString> mVariables;
 
-//  mVariables.push_back("PseTop_Mass");
-//  mVariables.push_back("PseTbar_Mass");
+  //  mVariables.push_back("PseTop_Mass");
+  //  mVariables.push_back("PseTbar_Mass");
   mVariables.push_back("dR_B1_B2");
   mVariables.push_back("dR_B1_B3");
   mVariables.push_back("dR_B2_B3");
@@ -49,17 +52,18 @@ int main(int argc, char const *argv[]) {
   mVariables.push_back("pT_B1");
   mVariables.push_back("pT_B2");
   mVariables.push_back("pT_B3");
-  mVariables.push_back("mv2c10_B1");
-  mVariables.push_back("mv2c10_B2");
-  mVariables.push_back("mv2c10_B3");
-
+  if (!noBtag) {
+    mVariables.push_back("mv2c10_B1");
+    mVariables.push_back("mv2c10_B2");
+    mVariables.push_back("mv2c10_B3");
+  }
 
   TCut cutSigTrain = "UsedForTrain == 1";
   TCut cutSigTest = "UsedForTrain == 0";
   TCut cutBkgTrain = "UsedForTrain == 1";
   TCut cutBkgTest = "UsedForTrain == 0";
 
-  //Setup TMVA Factory and training BDT
+  // Setup TMVA Factory and training BDT
   TMVA::Factory factory("RecoBDT_Dilepton", outFile);
   factory.SetInputVariables(&mVariables);
   factory.AddTree(mSigTree, "Signal", 1.0, cutSigTrain, "train");

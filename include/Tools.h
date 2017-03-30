@@ -45,6 +45,7 @@ std::map<std::string, float> SolveLeptonDirectNeutrinos(DilepEvent *mHpEvent);
 int CheckJetsMatchingEff(TTree *fTree, std::string outName);
 int CheckJetsWiLepMatchingEff(TTree *fTree, std::string outName);
 int PrepareBDTTrees(TTree *fTree, std::string outName);
-int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName, TFile *outFile);
+int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
+                 TFile *outFile);
 
 #endif /* ifndef __TOOLS_H */

@@ -480,9 +480,9 @@ std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
   mVariables["PseWm_Mass"] = PseWm.M();
   mVariables["PseTop_Mass"] = PseTop.M();
   mVariables["PseTbar_Mass"] = PseTbar.M();
-  //mVariables["PseHplus_Mass"] = PseHplus.M();
+  // mVariables["PseHplus_Mass"] = PseHplus.M();
 
-  //mVariables["dR_Lp_Lm"] = mHpEvent->GetVector(ObjType::Lp)
+  // mVariables["dR_Lp_Lm"] = mHpEvent->GetVector(ObjType::Lp)
   //                             ->DeltaR(*(mHpEvent->GetVector(ObjType::Lm)));
   mVariables["dR_B1_B2"] = mHpEvent->GetVector(ObjType::B1)
                                ->DeltaR(*(mHpEvent->GetVector(ObjType::B2)));
@@ -491,24 +491,24 @@ std::map<std::string, float> GetBDTInputVars(DilepEvent *mHpEvent) {
   mVariables["dR_B2_B3"] = mHpEvent->GetVector(ObjType::B2)
                                ->DeltaR(*(mHpEvent->GetVector(ObjType::B3)));
 
-  //mVariables["Pse_dR_Wp_Wm"] = PseWp.DeltaR(PseWm);
+  // mVariables["Pse_dR_Wp_Wm"] = PseWp.DeltaR(PseWm);
   mVariables["Pse_dR_ttbar"] = PseTop.DeltaR(PseTbar);
-  //mVariables["Pse_dR_Hp_tbar"] = PseHplus.DeltaR(PseTbar);
+  // mVariables["Pse_dR_Hp_tbar"] = PseHplus.DeltaR(PseTbar);
 
-  //mVariables["PseWp_Mass_NoNu"] = mHpEvent->GetVector(ObjType::Lp)->M();
-  //mVariables["PseWm_Mass_NoNu"] = mHpEvent->GetVector(ObjType::Lm)->M();
+  // mVariables["PseWp_Mass_NoNu"] = mHpEvent->GetVector(ObjType::Lp)->M();
+  // mVariables["PseWm_Mass_NoNu"] = mHpEvent->GetVector(ObjType::Lm)->M();
   mVariables["PseTop_Mass_NoNu"] = PseTop_NoNu.M();
   mVariables["PseTbar_Mass_NoNu"] = PseTbar_NoNu.M();
-  //mVariables["PseHplus_Mass_NoNu"] = PseHplus_NoNu.M();
+  // mVariables["PseHplus_Mass_NoNu"] = PseHplus_NoNu.M();
   mVariables["Pse_dR_ttbar_NoNu"] = PseTop_NoNu.DeltaR(PseTbar_NoNu);
-  //mVariables["Pse_dR_Hp_tbar_NoNu"] = PseHplus_NoNu.DeltaR(PseTbar_NoNu);
-  //mVariables["PseWp_Mass_Lep"] = PseWp_Lep.M();
-  //mVariables["PseWm_Mass_Lep"] = PseWm_Lep.M();
+  // mVariables["Pse_dR_Hp_tbar_NoNu"] = PseHplus_NoNu.DeltaR(PseTbar_NoNu);
+  // mVariables["PseWp_Mass_Lep"] = PseWp_Lep.M();
+  // mVariables["PseWm_Mass_Lep"] = PseWm_Lep.M();
   mVariables["PseTop_Mass_Lep"] = PseTop_Lep.M();
   mVariables["PseTbar_Mass_Lep"] = PseTbar_Lep.M();
-  //mVariables["PseHplus_Mass_Lep"] = PseHplus_Lep.M();
+  // mVariables["PseHplus_Mass_Lep"] = PseHplus_Lep.M();
 
-  //Added new variables
+  // Added new variables
   mVariables["pT_B1"] = mHpEvent->GetVector(ObjType::B1)->Pt();
   mVariables["pT_B2"] = mHpEvent->GetVector(ObjType::B2)->Pt();
   mVariables["pT_B3"] = mHpEvent->GetVector(ObjType::B3)->Pt();
@@ -896,8 +896,8 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   float Pse_dR_ttbar_NoNu;
   // Neutrino direction same as corresponding lepton
   float PseTop_Mass_Lep, PseTbar_Mass_Lep;
-  float pT_B1, pT_B2,pT_B3;
-  float mv2c10_B1, mv2c10_B2,mv2c10_B3;
+  float pT_B1, pT_B2, pT_B3;
+  float mv2c10_B1, mv2c10_B2, mv2c10_B3;
 
   const int toMatch = 3;
   int UsedForTrain;
@@ -935,12 +935,12 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
                    "Pse_dR_ttbar_NoNu/F");
   mSigTree->Branch("PseTop_Mass_Lep", &PseTop_Mass_Lep, "PseTop_Mass_Lep/F");
   mSigTree->Branch("PseTbar_Mass_Lep", &PseTbar_Mass_Lep, "PseTbar_Mass_Lep/F");
-  mSigTree->Branch("pT_B1",&pT_B1,"pT_B1/F");
-  mSigTree->Branch("pT_B2",&pT_B2,"pT_B2/F");
-  mSigTree->Branch("pT_B3",&pT_B3,"pT_B3/F");
-  mSigTree->Branch("mv2c10_B1",&mv2c10_B1,"mv2c10_B1/F");
-  mSigTree->Branch("mv2c10_B2",&mv2c10_B2,"mv2c10_B2/F");
-  mSigTree->Branch("mv2c10_B3",&mv2c10_B3,"mv2c10_B3/F");
+  mSigTree->Branch("pT_B1", &pT_B1, "pT_B1/F");
+  mSigTree->Branch("pT_B2", &pT_B2, "pT_B2/F");
+  mSigTree->Branch("pT_B3", &pT_B3, "pT_B3/F");
+  mSigTree->Branch("mv2c10_B1", &mv2c10_B1, "mv2c10_B1/F");
+  mSigTree->Branch("mv2c10_B2", &mv2c10_B2, "mv2c10_B2/F");
+  mSigTree->Branch("mv2c10_B3", &mv2c10_B3, "mv2c10_B3/F");
 
   mBkgTree->Branch("PseTop_Mass", &PseTop_Mass, "PseTop_Mass/F");
   mBkgTree->Branch("PseTbar_Mass", &PseTbar_Mass, "PseTbar_Mass/F");
@@ -956,12 +956,12 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
                    "Pse_dR_ttbar_NoNu/F");
   mBkgTree->Branch("PseTop_Mass_Lep", &PseTop_Mass_Lep, "PseTop_Mass_Lep/F");
   mBkgTree->Branch("PseTbar_Mass_Lep", &PseTbar_Mass_Lep, "PseTbar_Mass_Lep/F");
-  mBkgTree->Branch("pT_B1",&pT_B1,"pT_B1/F");
-  mBkgTree->Branch("pT_B2",&pT_B2,"pT_B2/F");
-  mBkgTree->Branch("pT_B3",&pT_B3,"pT_B3/F");
-  mBkgTree->Branch("mv2c10_B1",&mv2c10_B1,"mv2c10_B1/F");
-  mBkgTree->Branch("mv2c10_B2",&mv2c10_B2,"mv2c10_B2/F");
-  mBkgTree->Branch("mv2c10_B3",&mv2c10_B3,"mv2c10_B3/F");
+  mBkgTree->Branch("pT_B1", &pT_B1, "pT_B1/F");
+  mBkgTree->Branch("pT_B2", &pT_B2, "pT_B2/F");
+  mBkgTree->Branch("pT_B3", &pT_B3, "pT_B3/F");
+  mBkgTree->Branch("mv2c10_B1", &mv2c10_B1, "mv2c10_B1/F");
+  mBkgTree->Branch("mv2c10_B2", &mv2c10_B2, "mv2c10_B2/F");
+  mBkgTree->Branch("mv2c10_B3", &mv2c10_B3, "mv2c10_B3/F");
 
   // main loop
   long nentries = fTree->GetEntries();
@@ -1009,7 +1009,8 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     std::vector<float> jet_phi =
         GetTreeValue<std::vector<float>>(fTree, "jet_phi");
     std::vector<float> jet_e = GetTreeValue<std::vector<float>>(fTree, "jet_e");
-    std::vector<float> jet_mv2c10 = GetTreeValue<std::vector<float>>(fTree,"jet_mv2c10");
+    std::vector<float> jet_mv2c10 =
+        GetTreeValue<std::vector<float>>(fTree, "jet_mv2c10");
 
     // Get Jets permutation and loop them
     int hasCorrectMatch = 0;
@@ -1153,7 +1154,8 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     std::vector<float> jet_phi =
         GetTreeValue<std::vector<float>>(mTree, "jet_phi");
     std::vector<float> jet_e = GetTreeValue<std::vector<float>>(mTree, "jet_e");
-    std::vector<float> jet_mv2c10 = GetTreeValue<std::vector<float>>(mTree, "jet_mv2c10");
+    std::vector<float> jet_mv2c10 =
+        GetTreeValue<std::vector<float>>(mTree, "jet_mv2c10");
 
     mJetPt = jet_pt;
     mJetEta = jet_eta;
@@ -1207,19 +1209,17 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
       }
       float tmpBDTscore = mReader->EvaluateMVA(MethodName);
       mScoresVec.push_back(tmpBDTscore);
-      if (i == 2689)
-      {
-        std::cout<<iPerm<<": "<<tmpBDTscore<<std::endl;
-        for (auto p : mPerm)
-        {
-          std::cout<<p<<" ";
+      if (i == 2689) {
+        std::cout << iPerm << ": " << tmpBDTscore << std::endl;
+        for (auto p : mPerm) {
+          std::cout << p << " ";
         }
-        std::cout<<std::endl;
-        for (auto _var : mVariables)
-        {
-          std::cout<<"\t"<<_var.first.Data()<<": "<<_var.second<<std::endl;
+        std::cout << std::endl;
+        for (auto _var : mVariables) {
+          std::cout << "\t" << _var.first.Data() << ": " << _var.second
+                    << std::endl;
         }
-        std::cout<<"-----"<<std::endl;
+        std::cout << "-----" << std::endl;
       }
     }
     /*    auto ite_score = mScoresVec->begin();

@@ -4,6 +4,7 @@ import ROOT as rt
 import sys
 import os
 
+
 def GetRank(mTree, iEntry):
     mTree.GetEntry(iEntry)
     mScoreMap = getattr(mTree, 'RecoBDTScore')
@@ -11,7 +12,8 @@ def GetRank(mTree, iEntry):
 
     correctScore = mScoreMap[iCorrect]
 
-    return sorted(mScoreMap,reverse=True).index(correctScore)+1
+    return sorted(mScoreMap, reverse=True).index(correctScore) + 1
+
 
 def main(inFilePath):
     inFile = rt.TFile.Open(inFilePath)
@@ -36,7 +38,7 @@ def main(inFilePath):
     hist.GetXaxis().SetTitle('Rank')
     hist.SetLineWidth(2)
     hist.SetMinimum(0)
-    hist.SetMaximum(hist.GetMaximum()*1.4)
+    hist.SetMaximum(hist.GetMaximum() * 1.4)
 
     hist.Draw('hist')
 
@@ -45,7 +47,7 @@ def main(inFilePath):
     for i in xrange(2, 12):
         wrongReco += hist[i]
 
-    eff = correctReco / (wrongReco+correctReco)
+    eff = correctReco / (wrongReco + correctReco)
 
     tt = rt.TText(0.12, 0.8, 'Reconstruction Efficiency: %1.4f' % (eff))
     tt.SetNDC()

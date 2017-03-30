@@ -5,8 +5,10 @@ import sys
 import os
 import collections
 
+
 def GetEfficiency(hist):
-    return hist[2]/(hist[1]+hist[2])
+    return hist[2] / (hist[1] + hist[2])
+
 
 def OpenAllFiles(inFile):
     mFileDict = collections.OrderedDict()
@@ -14,13 +16,14 @@ def OpenAllFiles(inFile):
     Lines = mFile.readlines()
     for line in Lines:
         masspoint = line.strip().split(' ')[0]
-        filepath  = line.strip().split(' ')[1]
+        filepath = line.strip().split(' ')[1]
         tmpRFile = rt.TFile.Open(filepath)
         if not tmpRFile.IsZombie():
             mFileDict[masspoint] = tmpRFile
         else:
             print 'Cannot open %s' % (masspoint)
     return mFileDict
+
 
 def PlotRecoEff(inFiles, outName='effplot.eps'):
     mFileDict = OpenAllFiles(inFiles)
@@ -31,16 +34,17 @@ def PlotRecoEff(inFiles, outName='effplot.eps'):
     nMassPoints = len(mMassPoint)
 
     for mp, _file in mFileDict.items():
-        mHistName = 'RecoBDT_Dilepton_'+mp+'_'+mp+'_eff'
+        mHistName = 'RecoBDT_Dilepton_' + mp + '_' + mp + '_eff'
         mHistDict[mp] = _file.Get(mHistName)
 
     for mp, _hist in mHistDict.items():
         mEffDict[mp] = GetEfficiency(_hist)
 
-    hist_eff = rt.TH1F('hist_eff', 'ReconstructionEfficiency', nMassPoints, 0, nMassPoints)
+    hist_eff = rt.TH1F('hist_eff', 'ReconstructionEfficiency',
+                       nMassPoints, 0, nMassPoints)
     for iMassPoint, mp in enumerate(mMassPoint):
-        hist_eff.SetBinContent(iMassPoint+1, mEffDict[mp])
-        hist_eff.GetXaxis().SetBinLabel(iMassPoint+1, mp)
+        hist_eff.SetBinContent(iMassPoint + 1, mEffDict[mp])
+        hist_eff.GetXaxis().SetBinLabel(iMassPoint + 1, mp)
 
     canvas = rt.TCanvas('c1', 'c1', 800, 600)
     hist_eff.SetStats(0)

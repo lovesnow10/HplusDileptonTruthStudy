@@ -4,6 +4,7 @@ import ROOT as rt
 import sys
 import os
 
+
 def CheckTree(mTree):
     index = long(raw_input('Please give entry index:'))
     mTree.GetEntry(index)
@@ -23,11 +24,12 @@ def CheckTree(mTree):
     tmpMap = sorted(mScoreMap, reverse=True)
     pos = tmpMap.index(correctScore) + 1
     print 'Correct Score is {}'.format(pos)
-    canvas = rt.TCanvas('c1','c1',800,600)
+    canvas = rt.TCanvas('c1', 'c1', 800, 600)
     hsig.SetLineColor(2)
     hbkg.Draw('hist')
     hsig.Draw('hist same')
     return raw_input('y to continue, other to exit \n')
+
 
 def main(inFilePath):
     inFile = rt.TFile.Open(inFilePath)
