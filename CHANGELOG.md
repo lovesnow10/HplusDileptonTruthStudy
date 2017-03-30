@@ -19,3 +19,16 @@
 # 2016.11.22
 * Change defaut name pattern to "FileName"
 * Add Readme.md
+
+# 2016.11.24
+* Add new main function "PrepareBDTTrees"
+* Change to use one lib, because some depedency-problem that I can't solve now.
+
+# 2016.11.25
+* Add new main function "TrainRecoBDT"
+
+# 2016.12.12
+* Add new BDT input varialbes
+
+3 2016.12.18
+* Add new main function "ApplyRecoBDT"
