@@ -898,6 +898,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   float PseTop_Mass_Lep, PseTbar_Mass_Lep;
   float pT_B1, pT_B2, pT_B3;
   float mv2c10_B1, mv2c10_B2, mv2c10_B3;
+  float eventWeight;
 
   const int toMatch = 3;
   int UsedForTrain;
@@ -919,6 +920,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mv2c10_B1 = 0;
   mv2c10_B2 = 0;
   mv2c10_B3 = 0;
+  eventWeight = 0;
   UsedForTrain = -1;
 
   mSigTree->Branch("PseTop_Mass", &PseTop_Mass, "PseTop_Mass/F");
@@ -941,6 +943,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mSigTree->Branch("mv2c10_B1", &mv2c10_B1, "mv2c10_B1/F");
   mSigTree->Branch("mv2c10_B2", &mv2c10_B2, "mv2c10_B2/F");
   mSigTree->Branch("mv2c10_B3", &mv2c10_B3, "mv2c10_B3/F");
+  mSigTree->Branch("eventWeight", &eventWeight, "eventWeight/F");
 
   mBkgTree->Branch("PseTop_Mass", &PseTop_Mass, "PseTop_Mass/F");
   mBkgTree->Branch("PseTbar_Mass", &PseTbar_Mass, "PseTbar_Mass/F");
@@ -962,6 +965,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
   mBkgTree->Branch("mv2c10_B1", &mv2c10_B1, "mv2c10_B1/F");
   mBkgTree->Branch("mv2c10_B2", &mv2c10_B2, "mv2c10_B2/F");
   mBkgTree->Branch("mv2c10_B3", &mv2c10_B3, "mv2c10_B3/F");
+  mBkgTree->Branch("eventWeight", &eventWeight, "eventWeight/F");
 
   // main loop
   long nentries = fTree->GetEntries();
@@ -1011,6 +1015,16 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     std::vector<float> jet_e = GetTreeValue<std::vector<float>>(fTree, "jet_e");
     std::vector<int> jet_tagWeightBin =
         GetTreeValue<std::vector<int>>(fTree, "jet_tagWeightBin");
+
+    //Get Weights
+    float weight_mc = GetTreeValue<float>(fTree, "weight_mc");
+    float weight_pileup = GetTreeValue<float>(fTree, "weight_pileup");
+    float weight_leptonSF = GetTreeValue<float>(fTree, "weight_leptonSF");
+    float weight_jvt = GetTreeValue<float>(fTree, "weight_jvt");
+    float weight_bTagSF_Continuous = GetTreeValue<float>(fTree, "weight_bTagSF_Continuous");
+    float weight_ttbb_Nominal = GetTreeValue<float>(fTree, "weight_ttbb_Nominal");
+
+    eventWeight = fabs(weight_mc) * weight_pileup * weight_leptonSF * weight_bTagSF_Continuous * weight_jvt * weight_ttbb_Nominal;
 
     // Get Jets permutation and loop them
     int hasCorrectMatch = 0;

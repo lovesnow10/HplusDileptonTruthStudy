@@ -15,11 +15,13 @@ int main(int argc, char const *argv[]) {
   TFile *inFile = OpenFile(argv[1]);
   TFile *outFile = CreateNewFile(argv[2]);
 
-  std::string _no_btag;
+  std::string _additional;
   std::string _suffix = std::string(argv[3]);
-  if (argc > 4) _no_btag = std::string(argv[4]);
-  else _no_btag = "NO";
-  bool noBtag = (_no_btag == "NOBTAG") ? true : false;
+  if (argc > 4) _additional = std::string(argv[4]);
+  else _additional = "NO";
+  bool noBtag, useWeight;
+  noBtag = (_additional == "NOBTAG&WEIGHT")?true:(_additional == "NOBTAG")?true:false;
+  useWeight = (_additional == "NOBTAG&WEIGHT")?true:(_additional == "WEIGHT")?true:false;
 
   TTree *mSigTree = GetTTree("signal", inFile);
   TTree *mBkgTree = GetTTree("background", inFile);
@@ -74,6 +76,12 @@ int main(int argc, char const *argv[]) {
   factory.AddTree(mSigTree, "Signal", 1.0, cutSigTest, "test");
   factory.AddTree(mBkgTree, "Background", 1.0, cutBkgTrain, "train");
   factory.AddTree(mBkgTree, "Background", 1.0, cutBkgTest, "test");
+
+  if (useWeight)
+  {
+    factory.SetSignalWeightExpression("eventWeight");
+    factory.SetBackgroundWeightExpression("eventWeight");
+  }
 
   factory.PrepareTrainingAndTestTree("", trainingOptions);
   factory.BookMethod(TMVA::Types::kBDT, classifierName, classifierOptions);
