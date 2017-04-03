@@ -16,7 +16,8 @@ int main(int argc, char const *argv[]) {
   TFile *outFile = CreateNewFile(argv[2]);
 
   std::string _no_btag;
-  if (argc > 3) _no_btag = std::string(argv[3]);
+  std::string _suffix = std::string(argv[3]);
+  if (argc > 4) _no_btag = std::string(argv[4]);
   else _no_btag = "NO";
   bool noBtag = (_no_btag == "NOBTAG") ? true : false;
 
@@ -24,7 +25,8 @@ int main(int argc, char const *argv[]) {
   TTree *mBkgTree = GetTTree("background", inFile);
 
   // definde options
-  TString classifierName = "RecoBDT_Dilepton";
+  TString classifierName = "RecoBDThpDil";
+  classifierName = classifierName + "_" + _suffix;
   TString trainingOptions;
   TString classifierOptions;
 
@@ -66,7 +68,7 @@ int main(int argc, char const *argv[]) {
   TCut cutBkgTest = "UsedForTrain == 0";
 
   // Setup TMVA Factory and training BDT
-  TMVA::Factory factory("RecoBDT_Dilepton", outFile);
+  TMVA::Factory factory("RecoBDThpDil", outFile);
   factory.SetInputVariables(&mVariables);
   factory.AddTree(mSigTree, "Signal", 1.0, cutSigTrain, "train");
   factory.AddTree(mSigTree, "Signal", 1.0, cutSigTest, "test");

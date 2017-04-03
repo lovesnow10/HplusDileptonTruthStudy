@@ -1091,7 +1091,10 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
   std::map<TString, float> mVariables;
   const int toMatch = 3;
 
-  TString MethodName("RecoBDT_Dilepton");
+  TString mp = SampleName(0, SampleName.First("_"));
+  TString MethodName("RecoBDThpDil");
+  MethodName += "_";
+  MethodName += mp;
 
   grabVariableList(WeightFile, variables);
 
