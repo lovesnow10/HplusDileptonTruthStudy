@@ -49,12 +49,12 @@ int main(int argc, char const *argv[]) {
   mVariables.push_back("dR_B1_B2");
   mVariables.push_back("dR_B1_B3");
   mVariables.push_back("dR_B2_B3");
-  mVariables.push_back("Pse_dR_ttbar");
+//  mVariables.push_back("Pse_dR_ttbar");
   mVariables.push_back("PseTop_Mass_NoNu");
   mVariables.push_back("PseTbar_Mass_NoNu");
   mVariables.push_back("Pse_dR_ttbar_NoNu");
-  mVariables.push_back("PseTop_Mass_Lep");
-  mVariables.push_back("PseTbar_Mass_Lep");
+//  mVariables.push_back("PseTop_Mass_Lep");
+//  mVariables.push_back("PseTbar_Mass_Lep");
   mVariables.push_back("pT_B1");
   mVariables.push_back("pT_B2");
   mVariables.push_back("pT_B3");
