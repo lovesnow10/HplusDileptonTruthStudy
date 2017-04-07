@@ -117,8 +117,10 @@ def DrawPlots(path, region):
 
 
 def main(path, region):
+    tmpFile = rt.TFile('tmp.root', 'RECREATE')
     rt.gROOT.SetBatch(True)
     DrawPlots(path, region)
+    del tmpFile
 
 if __name__ == '__main__':
     main(sys.argv[1], sys.argv[2])
