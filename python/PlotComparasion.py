@@ -68,7 +68,6 @@ def DrawPlots(path, region):
             hist = NormlizeHist(hist)
 
             mHistDict[(method, sp)] = hist
-            print "Got hist {METHOD} in {SAMPLE}, EVENTS {NUMBER}".format(METHOD=method, SAMPLE=sp, NUMBER=hist.GetSumOfWeights())
 
     for method in Methods:
         canvas = rt.TCanvas("c1", "c1", 800, 600)
@@ -82,7 +81,7 @@ def DrawPlots(path, region):
 
         mGhostHist.SetStats(0)
         mGhostHist.SetMinimum(0)
-        mGhostHist.SetMaximum(mBkgHist.GetMaximum() * 1.5)
+        mGhostHist.SetMaximum(mBkgHist.GetMaximum() * 2.5)
 
         mGhostHist.Draw()
 
@@ -93,7 +92,7 @@ def DrawPlots(path, region):
         legend.AddEntry(mBkgHist, "t#bar{t}", "L")
 
         iStep = 0
-
+        tmpText = {}
         for sp in Samples:
             if sp == "ttbarPP8":
                 continue
@@ -104,12 +103,13 @@ def DrawPlots(path, region):
             separation = GetSeparation(hist, mBkgHist)
 
             text = 'Separation %s, %1.4f' % (sp, separation)
-            Ttext = rt.TText(0.12, 0.8 - 0.04 * iStep, text)
-            Ttext.SetNDC()
-            Ttext.SetTextSize(0.032)
-            Ttext.AppendPad()
+            tmpText[sp] = rt.TText(0.12, 0.8 - 0.06 * iStep, text)
+            tmpText[sp].SetNDC()
+            tmpText[sp].SetTextSize(0.032)
+            tmpText[sp].AppendPad()
 
             iStep += 1
+        legend.Draw()
 
         mGhostHist.SetTitle(method)
 
