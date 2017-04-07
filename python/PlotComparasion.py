@@ -62,10 +62,11 @@ def DrawPlots(path, region):
             mTree.Project(histname, varName)
             hist.SetLineWidth(1)
             hist.SetLineColor(Colors[sp])
-            hist.SetTitle(0)
+            hist.SetTitle('')
             hist = NormlizeHist(hist)
 
             mHistDict[(method, sp)] = hist
+            print "Got hist {METHOD} in {SAMPLE}, EVENTS {NUMBER}".format(METHOD=method, SAMPLE=sp, NUMBER=hist.GetSumOfWeights())
 
     for method in Methods:
         canvas = rt.TCanvas("c1", "c1", 800, 600)
