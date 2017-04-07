@@ -45,6 +45,7 @@ def DrawPlots(path, region):
               "hp300": 7, "hp350": 8, "hp400": 9, "hp500": 42, "ttbarPP8": 1}
 
     mHistDict = collections.OrderedDict()
+    mFileDict = collections.OrderedDict()
 
     for sp in Samples:
         mFilePath = path + '/' + region + '/' + sp + '.root'
@@ -52,6 +53,7 @@ def DrawPlots(path, region):
         if mFile.IsZombie():
             print "Cannot Open %s" % (mFilePath)
             sys.exit(-1)
+        mFileDict[sp] = mFile
         mTree = mFile.Get("nominal_Loose")
 
         for method in Methods:
@@ -117,10 +119,8 @@ def DrawPlots(path, region):
 
 
 def main(path, region):
-    tmpFile = rt.TFile('tmp.root', 'RECREATE')
     rt.gROOT.SetBatch(True)
     DrawPlots(path, region)
-    del tmpFile
 
 if __name__ == '__main__':
     main(sys.argv[1], sys.argv[2])
