@@ -100,9 +100,9 @@ def main(mSigFilePath, mBkgFilePath):
     mMassPoint = mMassPoint.split('/')[-1]
 
     mSigHist = GetBDTScoreHist(
-        mSigFile, 'RecoBDT_Dilepton_' + mMassPoint + '_' + mMassPoint)
+        mSigFile, 'RecoBDThpDil_' + mMassPoint + '_' + mMassPoint + '_' + mMassPoint)
     mBkgHist = GetBDTScoreHist(
-        mBkgFile, 'RecoBDT_Dilepton_' + mMassPoint + '_ttbarPP8')
+        mBkgFile, 'RecoBDThpDil_' + mMassPoint + '_' + mMassPoint + '_ttbarPP8')
 
     mSigHist.SetName(mMassPoint)
     mBkgHist.SetName('ttbar')

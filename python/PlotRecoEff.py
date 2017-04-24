@@ -34,7 +34,7 @@ def PlotRecoEff(inFiles, outName='effplot.eps'):
     nMassPoints = len(mMassPoint)
 
     for mp, _file in mFileDict.items():
-        mHistName = 'RecoBDT_Dilepton_' + mp + '_' + mp + '_eff'
+        mHistName = 'RecoBDThpDil_' + mp + '_' + mp + '_' + mp + '_eff'
         mHistDict[mp] = _file.Get(mHistName)
 
     for mp, _hist in mHistDict.items():

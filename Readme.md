@@ -19,10 +19,10 @@ Usage: It accepts 2 arguments
 * `$ PrepareBDT input.root output.root` Input is the original TTHbbLeptonic Ntuple.
 
 ### TrainRecoBDT
-This is the main horse used to train the RecoBDT. Variables and parameters for the BDT training is hard-coded in the file *TrainRecoBDT.C*, if you want to tune them, please modify the file and compile again.
+This is the main horse used to train the RecoBDT. Variables and parameters for the BDT training is hard-coded in the file *TrainRecoBDT.C*, if you want to tune them, please modify the file and compile again. Now you can turn-off PCBT(Pseduo Continouos B-Tagging) variables by add "NOBTAG" argument.
 
-Usage: It accepts 2 arguments
-* `$ TrainRecoBDT input.root output.root` Input is the output from `PrepareBDT`. Due to TMVA's behaviour, pls run the executable in a stand-alone folder. No matter which output path you give to your "output.root", the more important "weights" folder will be always in the folder you run the executable. Please take care to avoid unexpected over-written.
+Usage: It accepts 3 or 4 arguments
+* `$ TrainRecoBDT input.root output.root SUFFIX (NOBTAG)` Input is the output from `PrepareBDT`. Due to TMVA's behaviour, pls run the executable in a stand-alone folder. No matter which output path you give to your "output.root", the more important "weights" folder will be always in the folder you run the executable. Please take care to avoid unexpected over-written. You need to specify a suffix for the method name, basically your mass point. Turn off PCBT variables using NOBTAG, it's optional.
 
 ### ApplyRecoBDT
 This executable takes the results from training and use it on other events. It gives a Max RecoBDT score for a givin event, which is expeted to be used as an input for classification BDT. For validation purpose, it also save some infomation to an outputTree.
