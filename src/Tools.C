@@ -363,8 +363,10 @@ int CheckTrueDilepton(TTree *mEvent) {
 }
 
 int FakeLeptonRemoval(TTree *mEvent) {
-  int isFake = 1;
-  bool pass = false;
+  int isFake = GetTreeValue<int>(mEvent, "MCFakes_hasFakeLepton");
+  return isFake;
+
+/*  bool pass = false;
 
   int nElectrons = GetTreeValue<int>(mEvent, "nElectrons");
   int nMuons = GetTreeValue<int>(mEvent, "nMuons");
@@ -428,7 +430,7 @@ int FakeLeptonRemoval(TTree *mEvent) {
 
   if (pass)
     isFake = 0;
-  return isFake;
+  return isFake;*/
 }
 
 int TauVeto(TTree *mEvent) {
@@ -579,7 +581,7 @@ int CheckJetsMatchingEff(TTree *mTree, std::string outName) {
       std::cout << "Processing " << i << std::endl;
     mTree->GetEntry(i);
     nJets = GetTreeValue<int>(mTree, "nJets");
-    nBTags = GetTreeValue<int>(mTree, "nBTags");
+    nBTags = GetTreeValue<int>(mTree, "nBTags_77");
     nElectrons = GetTreeValue<int>(mTree, "nElectrons");
     nMuons = GetTreeValue<int>(mTree, "nMuons");
     if (nElectrons + nMuons < 2)
@@ -738,7 +740,7 @@ int CheckJetsWiLepMatchingEff(TTree *mTree, std::string outName) {
       continue;
 
     nJets = GetTreeValue<int>(mTree, "nJets");
-    nBTags = GetTreeValue<int>(mTree, "nBTags");
+    nBTags = GetTreeValue<int>(mTree, "nBTags_77");
     nElectrons = GetTreeValue<int>(mTree, "nElectrons");
     nMuons = GetTreeValue<int>(mTree, "nMuons");
     if (nElectrons + nMuons < 2)
@@ -979,7 +981,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
 
     // define some variables
     int nJets = GetTreeValue<int>(fTree, "nJets");
-    int nBTags = GetTreeValue<int>(fTree, "nBTags");
+    int nBTags = GetTreeValue<int>(fTree, "nBTags_70");
     // if(!(nJets > 3 && nBTags >= 3)) continue; //AnaRegion = SR (Tight Def)
     if (!(nJets >= 3 && nBTags > 0))
       continue; // AnaRegion = Loose Def
@@ -1022,9 +1024,9 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     float weight_leptonSF = GetTreeValue<float>(fTree, "weight_leptonSF");
     float weight_jvt = GetTreeValue<float>(fTree, "weight_jvt");
     float weight_bTagSF_Continuous = GetTreeValue<float>(fTree, "weight_bTagSF_Continuous");
-    float weight_ttbb_Nominal = GetTreeValue<float>(fTree, "weight_ttbb_Nominal");
+//    float weight_ttbb_Nominal = GetTreeValue<float>(fTree, "weight_ttbb_Nominal");
 
-    eventWeight = fabs(weight_mc) * weight_pileup * weight_leptonSF * weight_bTagSF_Continuous * weight_jvt * weight_ttbb_Nominal;
+    eventWeight = fabs(weight_mc) * weight_pileup * weight_leptonSF * weight_bTagSF_Continuous * weight_jvt;
 
     // Get Jets permutation and loop them
     int hasCorrectMatch = 0;
@@ -1180,7 +1182,7 @@ int ApplyRecoBDT(TFile *inFile, TString &WeightFile, TString &SampleName,
     mJetE = jet_e;
 
     int nJets = GetTreeValue<int>(mTree, "nJets");
-    int nBTags = GetTreeValue<int>(mTree, "nBTags");
+    int nBTags = GetTreeValue<int>(mTree, "nBTags_77");
 
     if (!(nJets >= 3 && nBTags > 0))
       continue;
