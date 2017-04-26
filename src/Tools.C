@@ -983,7 +983,7 @@ int PrepareBDTTrees(TTree *fTree, std::string outName) {
     int nJets = GetTreeValue<int>(fTree, "nJets");
     int nBTags = GetTreeValue<int>(fTree, "nBTags_70");
     // if(!(nJets > 3 && nBTags >= 3)) continue; //AnaRegion = SR (Tight Def)
-    if (!(nJets >= 3 && nBTags > 0))
+    if (!(nJets >= 3 && nBTags > 1))
       continue; // AnaRegion = Loose Def
 
     std::map<std::string, bool> mMatchingResults;
